@@ -45,6 +45,7 @@ export type AdData = {
     durationInSeconds: number;
     headline?: string;
     sub?: string;
+    image?: string;
   };
 };
 
@@ -216,13 +217,25 @@ const SceneView: React.FC<{
   );
 };
 
-// ── 아웃트로 (브랜드 컬러 + 로고 + CTA) ─────────────────────
+// ── 아웃트로 (그라디언트 + 글로우 + 제품 카드 + CTA) ────────
 const Outro: React.FC<{ data: AdData }> = ({ data }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const minDim = Math.min(width, height);
-  const scale = spring({ frame, fps, config: { damping: 200 } });
+  const pop = spring({ frame, fps, config: { damping: 14, stiffness: 120 } });
   const opacity = interpolate(frame, [0, FADE_FRAMES], [0, 1], {
+    extrapolateRight: "clamp",
+  });
+  const underlineW = interpolate(frame, [10, 24], [0, minDim * 0.24], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const subShift = interpolate(frame, [14, 28], [minDim * 0.02, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const subOp = interpolate(frame, [14, 28], [0, 1], {
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   const brandColor = data.branding?.brandColor ?? "#0F172A";
@@ -231,43 +244,87 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: brandColor,
+        background: `linear-gradient(165deg, ${brandColor} 0%, #04121F 100%)`,
         justifyContent: "center",
         alignItems: "center",
-        gap: minDim * 0.035,
+        gap: minDim * 0.028,
         opacity,
       }}
     >
-      {data.branding?.logo ? (
+      {/* 중앙 라디얼 글로우 — 단색 배경의 밋밋함을 줄인다 */}
+      <AbsoluteFill
+        style={{
+          background: `radial-gradient(circle at 50% 40%, ${accentColor}40 0%, transparent 55%)`,
+        }}
+      />
+      {data.outro?.image ? (
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            borderRadius: minDim * 0.028,
+            padding: minDim * 0.016,
+            boxShadow: "0 24px 70px rgba(0, 0, 0, 0.45)",
+            transform: `scale(${0.75 + 0.25 * pop})`,
+          }}
+        >
+          <Img
+            src={staticFile(data.outro.image)}
+            style={{
+              width: minDim * 0.3,
+              height: minDim * 0.3,
+              objectFit: "cover",
+              borderRadius: minDim * 0.018,
+              display: "block",
+            }}
+          />
+        </div>
+      ) : data.branding?.logo ? (
         <Img
           src={staticFile(data.branding.logo)}
-          style={{ width: minDim * 0.25, objectFit: "contain" }}
+          style={{
+            width: minDim * 0.25,
+            objectFit: "contain",
+            transform: `scale(${0.75 + 0.25 * pop})`,
+          }}
         />
       ) : null}
       {data.outro?.headline ? (
         <div
           style={{
             color: "#FFFFFF",
-            fontSize: minDim * 0.075,
+            fontSize: minDim * 0.07,
             fontWeight: 800,
             fontFamily: FONT,
             textAlign: "center",
             maxWidth: "85%",
-            transform: `scale(${scale})`,
+            letterSpacing: "0.02em",
+            textShadow: "0 4px 24px rgba(0, 0, 0, 0.35)",
+            transform: `scale(${0.85 + 0.15 * pop})`,
           }}
         >
           {data.outro.headline}
         </div>
       ) : null}
+      <div
+        style={{
+          height: Math.max(2, minDim * 0.005),
+          width: underlineW,
+          backgroundColor: accentColor,
+          borderRadius: minDim * 0.003,
+        }}
+      />
       {data.outro?.sub ? (
         <div
           style={{
             color: accentColor,
-            fontSize: minDim * 0.035,
+            fontSize: minDim * 0.034,
             fontWeight: 600,
             fontFamily: FONT,
             textAlign: "center",
             maxWidth: "80%",
+            letterSpacing: "0.06em",
+            opacity: subOp,
+            transform: `translateY(${subShift}px)`,
           }}
         >
           {data.outro.sub}

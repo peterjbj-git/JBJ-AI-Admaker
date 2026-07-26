@@ -68,8 +68,11 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
     "enabled": true,
     "durationInSeconds": 3,
     "headline": "CTA 헤드라인",
-    "sub": "부가 문구 (URL, 해시태그 등)"
+    "sub": "부가 문구 (URL, 해시태그 등)",
+    "image": "assets/outro-product.jpg"  // 제품 이미지 카드 (권장). 없으면 branding.logo 폴백
   }
+  // 아웃트로는 그라디언트 배경 + 라디얼 글로우 + 애니메이션 언더라인이 자동 적용된다.
+  // image에는 유저 제공 제품컷(assets/input/)을 복사해 쓰는 것이 기본 — 흰 배경 정면컷이 카드에 가장 잘 맞는다.
 }
 ```
 
