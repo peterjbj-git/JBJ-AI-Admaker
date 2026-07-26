@@ -1,0 +1,69 @@
+{
+  "meta": { "title": "Atomy Aqua Cream 15s v2", "fps": 30 },
+  "audio": {
+    "narration": "assets/narration.wav",
+    "narrationVolume": 1.0,
+    "narrationStartSeconds": 1.0
+  },
+  "branding": {
+    "brandColor": "#0B6FB4",
+    "accentColor": "#AEE2FF"
+  },
+  "scenes": [
+    {
+      "id": "cut-1",
+      "type": "video",
+      "src": "assets/scene-1.mp4",
+      "durationInSeconds": 2,
+      "subtitle": "메마른 하루의 *끝*",
+      "videoVolume": 0.35
+    },
+    {
+      "id": "cut-2",
+      "type": "video",
+      "src": "assets/cut-2.mp4",
+      "durationInSeconds": 2,
+      "subtitle": "피부가 목마른 순간",
+      "videoVolume": 0.35
+    },
+    {
+      "id": "cut-3",
+      "type": "video",
+      "src": "assets/scene-2.mp4",
+      "durationInSeconds": 2,
+      "subtitle": "속부터 차오르는 *수분*",
+      "videoVolume": 0.35
+    },
+    {
+      "id": "cut-4",
+      "type": "video",
+      "src": "assets/cut-4.mp4",
+      "durationInSeconds": 2,
+      "subtitle": "물기를 머금은 텍스처",
+      "videoVolume": 0.35
+    },
+    {
+      "id": "cut-5",
+      "type": "video",
+      "src": "assets/cut-5.mp4",
+      "durationInSeconds": 2,
+      "subtitle": "*아쿠아* 부스팅",
+      "videoVolume": 0.35
+    },
+    {
+      "id": "cut-6",
+      "type": "video",
+      "src": "assets/scene-3.mp4",
+      "durationInSeconds": 2,
+      "subtitle": "애터미 *아쿠아 크림*",
+      "videoVolume": 0.35
+    }
+  ],
+  "outro": {
+    "enabled": true,
+    "durationInSeconds": 3,
+    "headline": "애터미 아쿠아 크림",
+    "sub": "속부터 차오르는 수분",
+    "image": "assets/outro-product.jpg"
+  }
+}
