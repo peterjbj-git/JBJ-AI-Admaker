@@ -81,6 +81,8 @@ export type AdData = {
     headline?: string;
     sub?: string;
     image?: string;
+    background?: string;
+    headlineColor?: string;
   };
 };
 
@@ -476,24 +478,56 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
   });
   const brandColor = data.branding?.brandColor ?? "#0F172A";
   const accentColor = data.branding?.accentColor ?? "#38BDF8";
+  // background 지정 시: 제품 히어로 이미지 풀블리드 + 타이포 오버레이 (카드 없음)
+  const hasBg = Boolean(data.outro?.background);
+  const headlineColor = data.outro?.headlineColor ?? "#FFFFFF";
+  const bgZoom = interpolate(frame, [0, fps * 4], [1.04, 1], {
+    extrapolateRight: "clamp",
+  });
 
   return (
     <AbsoluteFill
       style={{
-        background: `linear-gradient(165deg, ${brandColor} 0%, #04121F 100%)`,
-        justifyContent: "center",
+        background: hasBg
+          ? "#000000"
+          : `linear-gradient(165deg, ${brandColor} 0%, #04121F 100%)`,
+        justifyContent: hasBg ? "flex-end" : "center",
         alignItems: "center",
         gap: minDim * 0.028,
+        paddingBottom: hasBg ? height * 0.1 : 0,
         opacity,
       }}
     >
-      {/* 중앙 라디얼 글로우 — 단색 배경의 밋밋함을 줄인다 */}
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(circle at 50% 40%, ${accentColor}40 0%, transparent 55%)`,
-        }}
-      />
-      {data.outro?.image ? (
+      {hasBg ? (
+        <>
+          <AbsoluteFill>
+            <Img
+              src={staticFile(data.outro!.background!)}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transform: `scale(${bgZoom})`,
+              }}
+            />
+          </AbsoluteFill>
+          {/* 타이포 존 가독성 스크림 */}
+          <AbsoluteFill
+            style={{
+              background:
+                "linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, transparent 45%)",
+            }}
+          />
+        </>
+      ) : (
+        /* 중앙 라디얼 글로우 — 단색 배경의 밋밋함을 줄인다 */
+        <AbsoluteFill
+          style={{
+            background: `radial-gradient(circle at 50% 40%, ${accentColor}40 0%, transparent 55%)`,
+          }}
+        />
+      )}
+      {!hasBg && data.outro?.image ? (
         <div
           style={{
             backgroundColor: "#FFFFFF",
@@ -527,7 +561,7 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
       {data.outro?.headline ? (
         <div
           style={{
-            color: "#FFFFFF",
+            color: headlineColor,
             fontSize: minDim * 0.07,
             fontWeight: 800,
             fontFamily: FONT,

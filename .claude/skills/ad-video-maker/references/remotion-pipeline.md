@@ -79,10 +79,14 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
     "durationInSeconds": 3,
     "headline": "CTA 헤드라인",
     "sub": "부가 문구 (URL, 해시태그 등)",
-    "image": "assets/outro-product.jpg"  // 제품 이미지 카드 (권장). 없으면 branding.logo 폴백
+    "background": "assets/outro-bg.png",  // ★권장: 제품 중심 히어로 이미지 풀블리드 + 타이포 오버레이
+    "headlineColor": "#FFFFFF",           // background 위 헤드라인 컬러 (배경 밝기에 맞춰)
+    "image": "assets/outro-product.jpg"   // background 미지정 시 폴백: 그라디언트 + 제품 카드
   }
-  // 아웃트로는 그라디언트 배경 + 라디얼 글로우 + 애니메이션 언더라인이 자동 적용된다.
-  // image에는 유저 제공 제품컷(assets/input/)을 복사해 쓰는 것이 기본 — 흰 배경 정면컷이 카드에 가장 잘 맞는다.
+  // 아웃트로 2가지 모드:
+  // ① background 지정(권장) — 싱그러운 제품 히어로컷(힉스필드 generate_image로 제작, 제품 참조)을
+  //    풀블리드로 깔고 하단에 타이포 오버레이 + 자동 가독성 스크림 + 슬로우 줌.
+  // ② background 미지정 — 그라디언트 + 라디얼 글로우 + 제품 이미지 카드 (구형 스타일).
 }
 ```
 
