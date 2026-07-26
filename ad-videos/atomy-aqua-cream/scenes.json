@@ -1,5 +1,5 @@
-﻿{
-  "meta": { "title": "Atomy Aqua Cream 15s v4", "fps": 30 },
+{
+  "meta": { "title": "Atomy Aqua Cream 15s v5", "fps": 30 },
   "audio": {
     "bgm": "assets/bgm.mp3",
     "bgmVolume": 0.55,
@@ -17,7 +17,8 @@
       "src": "assets/scene-1.mp4",
       "durationInSeconds": 2,
       "subtitle": "메마른 하루의 끝.",
-      "font": "serif",
+      "font": "batang",
+      "reveal": "letters",
       "position": "top",
       "videoVolume": 0.65
     },
@@ -27,7 +28,8 @@
       "src": "assets/cut-2.mp4",
       "durationInSeconds": 2,
       "subtitle": "피부가 목마른 순간.",
-      "font": "serif",
+      "font": "myung",
+      "orientation": "vertical",
       "position": "left",
       "copyColor": "#0D4F79",
       "copyAccent": "#1F8FE5",
@@ -40,6 +42,7 @@
       "durationInSeconds": 2,
       "lead": "속부터 차오르는",
       "subtitle": "*깊은 수분*.",
+      "font": "batang",
       "position": "bottom",
       "copyColor": "#0D4F79",
       "copyAccent": "#1F8FE5",
@@ -51,6 +54,7 @@
       "src": "assets/cut-4.mp4",
       "durationInSeconds": 2,
       "subtitle": "물기를 머금은 텍스처.",
+      "font": "myung",
       "position": "left",
       "copyColor": "#0D4F79",
       "copyAccent": "#1F8FE5",
@@ -75,6 +79,7 @@
       "durationInSeconds": 2,
       "lead": "ATOMY",
       "subtitle": "*아쿠아 크림*.",
+      "font": "myung",
       "position": "top",
       "videoVolume": 0.65
     }

@@ -60,7 +60,11 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
       "subtitleStyle": "copy",         // "copy"(기본, 광고 카피 타이포) | "kinetic"(단어별 팝인) | "bar"(하단 바)
       "lead": "리드 문구",              // copy 전용: 메인 위 작은 라인 (계층). 없으면 생략
       "position": "left",              // copy 전용: "bottom"(기본)|"center"|"left"|"right"|"top" — 네거티브 스페이스에 배치
-      "font": "serif",                 // copy 전용: "sans"(기본, 제품·기능 카피) | "serif"(명조 — 감성·훅 카피)
+      "font": "batang",                // copy 전용 서체 팔레트: "sans"(기본 고딕) | "serif"(노토 명조)
+                                       //   | "batang"(고운바탕 — 부드러운 감성 훅) | "myung"(송명 — 클래식 디스플레이, K-뷰티 세로쓰기 단골)
+                                       //   | "impact"(블랙한산스 — 강한 헤드라인·프로모션)
+      "orientation": "vertical",       // copy 전용: "horizontal"(기본) | "vertical"(세로쓰기 — position left/right와 조합, 잡지 룩)
+      "reveal": "letters",             // copy 전용: "fade"(기본) | "letters"(글자 단위 리빌 — 감성 훅 카피에)
       "copyColor": "#0D4F79",          // copy 전용: 본문 컬러. 밝은 배경=브랜드 네이비, 어두운 배경=흰색(기본)
       "copyAccent": "#1F8FE5",         // copy 전용: 강조·마침표 컬러. 생략 시 branding.accentColor
       "scrim": true                    // copy 전용: 텍스트 존 소프트 그라데이션 명암 (기본 true — 가독성 확보)
@@ -95,8 +99,13 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
   ① 하단 고정이 아니라 컷의 네거티브 스페이스에 배치 (`position` — 컷마다 다르게),
   ② 흰색+그림자 박스 대신 배경 밝기에 맞춘 솔리드 브랜드 컬러 (`copyColor`),
   ③ 리드(작게)+메인(크게) 계층 (`lead`), ④ 카피 끝 마침표는 액센트 컬러 (문장에 "." 포함),
-  ⑤ 바운스 없는 조용한 페이드+슬라이드. 핵심 단어 1개에만 `*강조*` 마크업.
+  ⑤ 바운스 없는 조용한 페이드+슬라이드. 핵심 단어 1개에만 `*강조*` 마크업 (여러 단어 강조 가능, 별표는 렌더링 안 됨).
   "kinetic"(단어별 팝인)은 쇼츠/릴스 캡션 무드에만, "bar"는 UGC·인터뷰 씬에만 쓴다.
+- **수평 일변도 금지**: 15초 광고 기준 세로쓰기(`orientation: "vertical"`) 컷 1개,
+  서체 2~3종 혼용(감성=batang/myung, 기능=sans, 프로모션=impact)으로 타이포에 리듬을 만든다.
+  단, 같은 서체 계열은 같은 메시지 층위에만 쓴다 (컷마다 무작위 교체 금지).
+- 프로젝트별 전용 폰트가 필요하면 `@remotion/google-fonts/<FontName>` import를 추가한다
+  (한국어 지원 서체는 subsets: ["korean"] — 상세는 `.agents/skills/remotion-best-practices` 참조).
 - `type: "image"` 씬은 자동으로 켄번즈(느린 확대) 효과가 적용된다 — 생성 실패 씬의 대체재.
 - `type: "color"` 씬은 단색 배경 + 자막 — 텍스트 강조 씬이나 최후의 대체재.
 - 자막 언어는 brief의 언어 항목을 따른다. 자막은 씬당 1~2문장, 12단어 이내로 짧게.

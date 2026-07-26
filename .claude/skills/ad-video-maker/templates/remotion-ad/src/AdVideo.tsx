@@ -13,6 +13,9 @@ import {
 } from "remotion";
 import { loadFont as loadSansKR } from "@remotion/google-fonts/NotoSansKR";
 import { loadFont as loadSerifKR } from "@remotion/google-fonts/NotoSerifKR";
+import { loadFont as loadGowunBatang } from "@remotion/google-fonts/GowunBatang";
+import { loadFont as loadSongMyung } from "@remotion/google-fonts/SongMyung";
+import { loadFont as loadBlackHanSans } from "@remotion/google-fonts/BlackHanSans";
 
 // 시스템 폰트(맑은 고딕) 의존 금지 — PPT 느낌의 주범. 렌더 환경 무관하게 번들 폰트 사용.
 const { fontFamily: SANS_KR } = loadSansKR("normal", {
@@ -22,6 +25,18 @@ const { fontFamily: SANS_KR } = loadSansKR("normal", {
 const { fontFamily: SERIF_KR } = loadSerifKR("normal", {
   weights: ["400", "500", "600"],
   subsets: ["korean", "latin"],
+});
+const { fontFamily: GOWUN_BATANG } = loadGowunBatang("normal", {
+  weights: ["400", "700"],
+  subsets: ["korean", "latin"],
+});
+const { fontFamily: SONG_MYUNG } = loadSongMyung("normal", {
+  weights: ["400"],
+  subsets: ["korean"],
+});
+const { fontFamily: BLACK_HAN } = loadBlackHanSans("normal", {
+  weights: ["400"],
+  subsets: ["korean"],
 });
 
 // ── scenes.json 스키마 타입 ──────────────────────────────────
@@ -35,7 +50,9 @@ export type Scene = {
   subtitleStyle?: "copy" | "kinetic" | "bar";
   lead?: string;
   position?: "bottom" | "center" | "left" | "right" | "top";
-  font?: "sans" | "serif";
+  font?: "sans" | "serif" | "batang" | "myung" | "impact";
+  orientation?: "horizontal" | "vertical";
+  reveal?: "fade" | "letters";
   copyColor?: string;
   copyAccent?: string;
   scrim?: boolean;
@@ -79,6 +96,33 @@ export const calcTotalFrames = (data: AdData, fps: number): number => {
 const FONT = `${SANS_KR}, Pretendard, "Malgun Gothic", "Segoe UI", Roboto, sans-serif`;
 const FONT_SERIF = `${SERIF_KR}, "Nanum Myeongjo", "Batang", serif`;
 const FADE_FRAMES = 12;
+
+// 카피용 서체 팔레트 — 컷 성격에 맞춰 선택 (전부 렌더 시 자동 다운로드되는 번들 폰트)
+const COPY_FONTS: Record<
+  NonNullable<Scene["font"]>,
+  { family: string; baseWeight: number; accentWeight: number; tracking: string }
+> = {
+  sans: { family: FONT, baseWeight: 500, accentWeight: 700, tracking: "0.03em" },
+  serif: { family: FONT_SERIF, baseWeight: 500, accentWeight: 600, tracking: "0.06em" },
+  batang: {
+    family: `${GOWUN_BATANG}, ${SERIF_KR}, serif`,
+    baseWeight: 400,
+    accentWeight: 700,
+    tracking: "0.1em",
+  },
+  myung: {
+    family: `${SONG_MYUNG}, ${SERIF_KR}, serif`,
+    baseWeight: 400,
+    accentWeight: 400,
+    tracking: "0.12em",
+  },
+  impact: {
+    family: `${BLACK_HAN}, ${SANS_KR}, sans-serif`,
+    baseWeight: 400,
+    accentWeight: 400,
+    tracking: "0.02em",
+  },
+};
 
 // *구간* 마크업 파싱 — 별표는 화면에 절대 렌더링하지 않는다 (여러 단어 강조 지원)
 type CopySegment = { text: string; accent: boolean };
@@ -146,11 +190,12 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
   const base = scene.copyColor ?? "#FFFFFF";
   const acc = scene.copyAccent ?? accent;
   const pos = scene.position ?? "bottom";
-  const serif = scene.font === "serif";
-  const family = serif ? FONT_SERIF : FONT;
-  // 굵기 남발 금지 — 볼드 일변도가 PPT 느낌의 주범. 기본은 중간 굵기, 강조만 굵게.
-  const baseWeight = serif ? 500 : 500;
-  const accentWeight = serif ? 600 : 700;
+  // 굵기 남발 금지 — 볼드 일변도가 PPT 느낌의 주범. 서체별 굵기·자간은 팔레트에서.
+  const fontKey = scene.font ?? "sans";
+  const { family, baseWeight, accentWeight, tracking } = COPY_FONTS[fontKey];
+  const mainSize =
+    fontKey === "impact" ? 0.072 : fontKey === "sans" ? 0.052 : 0.06;
+  const vertical = scene.orientation === "vertical";
   const isLight = base.toUpperCase() === "#FFFFFF";
   const shadow = isLight ? "0 2px 14px rgba(0, 0, 0, 0.22)" : "none";
 
@@ -199,7 +244,10 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
       <div
         style={{
           maxWidth: "80%",
-          textAlign,
+          textAlign: vertical ? undefined : textAlign,
+          display: vertical ? "flex" : undefined,
+          flexDirection: vertical ? "row-reverse" : undefined,
+          alignItems: vertical ? "flex-start" : undefined,
           opacity,
           transform: `translateY(${rise}px)`,
           zIndex: 1,
@@ -214,7 +262,9 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
               fontWeight: 400,
               fontFamily: family,
               letterSpacing: "0.22em",
-              marginBottom: minDim * 0.014,
+              writingMode: vertical ? "vertical-rl" : undefined,
+              marginBottom: vertical ? 0 : minDim * 0.014,
+              marginLeft: vertical ? minDim * 0.014 : 0,
               textShadow: shadow,
             }}
           >
@@ -223,26 +273,54 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
         ) : null}
         <div
           style={{
-            fontSize: minDim * (serif ? 0.058 : 0.052),
+            fontSize: minDim * mainSize,
             fontWeight: baseWeight,
             fontFamily: family,
-            letterSpacing: serif ? "0.06em" : "0.03em",
+            letterSpacing: tracking,
             lineHeight: 1.45,
             whiteSpace: "pre-wrap",
+            writingMode: vertical ? "vertical-rl" : undefined,
+            maxHeight: vertical ? height * 0.7 : undefined,
             textShadow: shadow,
           }}
         >
-          {segments.map((seg, i) => (
-            <span
-              key={i}
-              style={{
-                color: seg.accent ? acc : base,
-                fontWeight: seg.accent ? accentWeight : baseWeight,
-              }}
-            >
-              {seg.text}
-            </span>
-          ))}
+          {scene.reveal === "letters"
+            ? // 글자 단위 리빌 — 감성 훅 카피용 (한 글자씩 조용히 떠오름)
+              segments
+                .flatMap((seg) =>
+                  Array.from(seg.text).map((ch) => ({ ch, accent: seg.accent }))
+                )
+                .map(({ ch, accent: isAcc }, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      color: isAcc ? acc : base,
+                      fontWeight: isAcc ? accentWeight : baseWeight,
+                      opacity: interpolate(
+                        frame,
+                        [4 + i * 2, 12 + i * 2],
+                        [0, 1],
+                        {
+                          extrapolateLeft: "clamp",
+                          extrapolateRight: "clamp",
+                        }
+                      ),
+                    }}
+                  >
+                    {ch}
+                  </span>
+                ))
+            : segments.map((seg, i) => (
+                <span
+                  key={i}
+                  style={{
+                    color: seg.accent ? acc : base,
+                    fontWeight: seg.accent ? accentWeight : baseWeight,
+                  }}
+                >
+                  {seg.text}
+                </span>
+              ))}
           {endsWithDot ? (
             <span style={{ color: acc, fontWeight: accentWeight }}>.</span>
           ) : null}
