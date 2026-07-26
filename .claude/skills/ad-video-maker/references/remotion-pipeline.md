@@ -1,5 +1,10 @@
 # 5단계 — Remotion 합성·렌더링 (무중단 구간)
 
+> **자막이 있는 광고를 만들 때는 `remotion-kinetic-captions` 스킬을 먼저 로드한다**
+> (`.claude/skills/remotion-kinetic-captions/SKILL.md`). 씬 통합 타이포의 절대 금지 규칙
+> (문장 통째 페이드인·순백색 자막·하단 고정 박스·모션블러 미적용 등)과 5레이어 정합
+> 방법론이 정의되어 있다. 템플릿에 @remotion/captions·@remotion/motion-blur 설치됨.
+
 `templates/remotion-ad/` 는 **사전 구성된 데이터 주도(data-driven) 렌더링 엔진**이다.
 React 코드를 수정하지 말 것 — `src/scenes.json` 작성과 에셋 배치만으로 영상이 조립된다.
 이유: 실행 시마다 코드를 새로 짜면 렌더링 실패 확률이 크게 오르고 재현성이 사라진다.
