@@ -20,6 +20,7 @@ export type Scene = {
   color?: string;
   durationInSeconds: number;
   subtitle?: string;
+  subtitleStyle?: "kinetic" | "bar";
   sfx?: string;
   sfxVolume?: number;
   muted?: boolean;
@@ -97,7 +98,65 @@ const SceneMedia: React.FC<{ scene: Scene; durationInFrames: number }> = ({
   return <AbsoluteFill style={{ backgroundColor: scene.color ?? "#111827" }} />;
 };
 
-// ── 하단 자막 ────────────────────────────────────────────────
+// ── 키네틱 자막 (기본) — 단어별 팝인, *단어* 는 강조 컬러 ────
+const KineticSubtitle: React.FC<{ text: string; accent: string }> = ({
+  text,
+  accent,
+}) => {
+  const frame = useCurrentFrame();
+  const { fps, width, height } = useVideoConfig();
+  const minDim = Math.min(width, height);
+  const words = text.split(" ").filter(Boolean);
+
+  return (
+    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center" }}>
+      <div
+        style={{
+          marginBottom: height * 0.1,
+          maxWidth: "88%",
+          textAlign: "center",
+          lineHeight: 1.25,
+        }}
+      >
+        {words.map((w, i) => {
+          const isAccent = w.length > 2 && w.startsWith("*") && w.endsWith("*");
+          const clean = isAccent ? w.slice(1, -1) : w;
+          const local = Math.max(0, frame - (3 + i * 4));
+          const pop = spring({
+            frame: local,
+            fps,
+            config: { damping: 12, stiffness: 200 },
+          });
+          const opacity = interpolate(local, [0, 6], [0, 1], {
+            extrapolateRight: "clamp",
+          });
+          return (
+            <span
+              key={i}
+              style={{
+                display: "inline-block",
+                transform: `scale(${0.6 + 0.4 * pop}) translateY(${
+                  (1 - pop) * minDim * 0.02
+                }px)`,
+                opacity,
+                color: isAccent ? accent : "#FFFFFF",
+                fontSize: minDim * (isAccent ? 0.062 : 0.055),
+                fontWeight: 800,
+                fontFamily: FONT,
+                textShadow: "0 2px 18px rgba(0, 0, 0, 0.45)",
+                marginRight: minDim * 0.014,
+              }}
+            >
+              {clean}
+            </span>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ── 하단 바 자막 (클래식, subtitleStyle: "bar") ──────────────
 const Subtitle: React.FC<{ text: string }> = ({ text }) => {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
@@ -131,10 +190,11 @@ const Subtitle: React.FC<{ text: string }> = ({ text }) => {
 };
 
 // ── 개별 씬 (페이드인 + 미디어 + 자막) ──────────────────────
-const SceneView: React.FC<{ scene: Scene; durationInFrames: number }> = ({
-  scene,
-  durationInFrames,
-}) => {
+const SceneView: React.FC<{
+  scene: Scene;
+  durationInFrames: number;
+  accent: string;
+}> = ({ scene, durationInFrames, accent }) => {
   const frame = useCurrentFrame();
   const opacity = interpolate(frame, [0, FADE_FRAMES], [0, 1], {
     extrapolateRight: "clamp",
@@ -142,7 +202,13 @@ const SceneView: React.FC<{ scene: Scene; durationInFrames: number }> = ({
   return (
     <AbsoluteFill style={{ opacity }}>
       <SceneMedia scene={scene} durationInFrames={durationInFrames} />
-      {scene.subtitle ? <Subtitle text={scene.subtitle} /> : null}
+      {scene.subtitle ? (
+        scene.subtitleStyle === "bar" ? (
+          <Subtitle text={scene.subtitle} />
+        ) : (
+          <KineticSubtitle text={scene.subtitle} accent={accent} />
+        )
+      ) : null}
       {scene.sfx ? (
         <Audio src={staticFile(scene.sfx)} volume={scene.sfxVolume ?? 0.8} />
       ) : null}
@@ -246,12 +312,14 @@ export const AdVideo: React.FC<{ data: AdData }> = ({ data }) => {
     Math.round((data.audio?.narrationStartSeconds ?? 0) * fps)
   );
 
+  const accentColor = data.branding?.accentColor ?? "#38BDF8";
+
   let cursor = 0;
   const sceneSequences = data.scenes.map((scene) => {
     const dur = Math.max(1, Math.round(scene.durationInSeconds * fps));
     const seq = (
       <Sequence key={scene.id} from={cursor} durationInFrames={dur}>
-        <SceneView scene={scene} durationInFrames={dur} />
+        <SceneView scene={scene} durationInFrames={dur} accent={accentColor} />
       </Sequence>
     );
     cursor += dur;

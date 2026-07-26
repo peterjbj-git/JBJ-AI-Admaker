@@ -1,30 +1,44 @@
 {
-  "meta": { "title": "Smoke Test", "fps": 30 },
-  "audio": {},
+  "meta": { "title": "Atomy Aqua Cream 15s", "fps": 30 },
+  "audio": {
+    "narration": "assets/narration.wav",
+    "narrationVolume": 1.0,
+    "narrationStartSeconds": 1.0
+  },
   "branding": {
-    "brandColor": "#0F172A",
-    "accentColor": "#38BDF8"
+    "brandColor": "#0B6FB4",
+    "accentColor": "#AEE2FF"
   },
   "scenes": [
     {
       "id": "scene-1",
-      "type": "color",
-      "color": "#1E3A5F",
-      "durationInSeconds": 2,
-      "subtitle": "ad-video-maker 템플릿 정상 동작 확인"
+      "type": "video",
+      "src": "assets/scene-1.mp4",
+      "durationInSeconds": 4,
+      "subtitle": "메마른 하루의 끝",
+      "videoVolume": 0.35
     },
     {
       "id": "scene-2",
-      "type": "color",
-      "color": "#3B0764",
-      "durationInSeconds": 2,
-      "subtitle": "Higgsfield × Remotion"
+      "type": "video",
+      "src": "assets/scene-2.mp4",
+      "durationInSeconds": 4,
+      "subtitle": "속부터 차오르는 수분",
+      "videoVolume": 0.35
+    },
+    {
+      "id": "scene-3",
+      "type": "video",
+      "src": "assets/scene-3.mp4",
+      "durationInSeconds": 4,
+      "subtitle": "애터미 아쿠아 크림",
+      "videoVolume": 0.35
     }
   ],
   "outro": {
     "enabled": true,
-    "durationInSeconds": 2,
-    "headline": "AD VIDEO MAKER",
-    "sub": "smoke test build"
+    "durationInSeconds": 3,
+    "headline": "애터미 아쿠아 크림",
+    "sub": "속부터 차오르는 수분"
   }
 }

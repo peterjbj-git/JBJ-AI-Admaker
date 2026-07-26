@@ -56,7 +56,8 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
       "src": "assets/scene-1.mp4",   // video/image일 때. color면 생략
       "color": "#1E3A5F",            // type: "color"일 때 배경색
       "durationInSeconds": 5,
-      "subtitle": "화면 하단 자막 카피",  // 없으면 생략
+      "subtitle": "화면 하단 *자막* 카피",  // 없으면 생략. *단어* 는 강조 컬러(accentColor)로 표시
+      "subtitleStyle": "kinetic",      // "kinetic"(기본, 단어별 팝인 타이포) | "bar"(클래식 하단 바)
       "sfx": "assets/sfx-1.mp3",       // 씬 시작에 맞춰 재생되는 효과음. 없으면 생략
       "sfxVolume": 0.8,                // 생략 시 0.8
       "muted": false,                  // true면 클립 원음(대사·환경음) 제거. 생략 시 false
@@ -75,8 +76,14 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
 ### 구성 규칙
 
 - **총 길이 = 씬 길이 합 + 아웃트로** 가 brief의 목표 길이와 일치하도록 씬 길이를 배분한다.
+- **scenes 배열의 항목 = 컷**이다. 스토리보드의 컷 단위를 그대로 옮긴다
+  (15초 기준 6~8컷, 컷당 1.5~2.5초 — 4초 이상 끌리는 단일 컷은 지루함의 주범).
+  같은 씬(메시지)의 컷들은 자막을 공유하거나 이어지는 문구로 나눈다.
 - 씬 `durationInSeconds` ≤ 실제 클립 길이여야 한다 (짧으면 앞부분만 사용되므로 안전,
-  길면 마지막 프레임에서 멈춘 화면이 노출된다).
+  길면 마지막 프레임에서 멈춘 화면이 노출된다). **모델 최소 길이보다 짧은 컷은
+  긴 클립을 생성해 앞부분만 쓰는 방식으로 만든다** (예: 4초 클립 → durationInSeconds 2).
+- 자막은 `subtitleStyle: "kinetic"`(기본)이 트렌디 표준 — 핵심 단어 1개에만 `*강조*` 마크업을
+  쓴다 (전부 강조하면 강조가 아니다). 차분·프리미엄 톤이면 "bar" 스타일을 고려한다.
 - `type: "image"` 씬은 자동으로 켄번즈(느린 확대) 효과가 적용된다 — 생성 실패 씬의 대체재.
 - `type: "color"` 씬은 단색 배경 + 자막 — 텍스트 강조 씬이나 최후의 대체재.
 - 자막 언어는 brief의 언어 항목을 따른다. 자막은 씬당 1~2문장, 12단어 이내로 짧게.
