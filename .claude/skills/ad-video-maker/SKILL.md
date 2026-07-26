@@ -65,7 +65,8 @@ AskUserQuestion으로 "이대로 진행 / 수정 요청"을 받고, 수정이 �
 
 `references/higgsfield-prompting.md` 를 읽고 진행한다.
 ToolSearch로 힉스필드 도구를 일괄 로드 → `balance` 로 잔여 크레딧 확인 →
-`models_explore(recommend)` 로 모델 선정 → 키 비주얼 이미지 → 씬별 비디오 → BGM/내레이션 순서로 생성한다.
+`models_explore(recommend)` 로 모델 선정 → 키 비주얼 이미지 → 씬별 비디오 → 오디오 순서로 생성한다.
+오디오(BGM·내레이션·SFX)는 `references/audio-guide.md` 의 프롬프트 공식·믹싱 기준을 따른다.
 **유저가 제품 이미지를 제공한 경우** `media_upload` 로 힉스필드에 업로드해 참조 입력으로 사용한다
 (실물 제품 외형을 보존하는 것이 텍스트 프롬프트 생성보다 항상 우선).
 생성물은 `scripts/download-assets.ps1` 로 `assets/` 에 다운로드한다.

@@ -84,6 +84,7 @@ ad-video-maker/
 │   ├── needs-checklist.md      #   1단계: 질문 설계
 │   ├── youtube-benchmark.md    #   2단계: 지역별 벤치마킹 전략
 │   ├── higgsfield-prompting.md #   4단계: 생성 모델·프롬프트 가이드
+│   ├── audio-guide.md          #   4단계: BGM·내레이션·SFX 생성/믹싱 가이드
 │   └── remotion-pipeline.md    #   5단계: 합성·렌더링 절차
 ├── templates/remotion-ad/      # Remotion 렌더링 엔진 (scenes.json만 쓰면 조립됨)
 └── scripts/download-assets.ps1 # 에셋 다운로드 스크립트 (재시도 내장)
@@ -102,6 +103,12 @@ A. ① 템플릿에서 `npm install` 을 했는지 ② `node --version` 이 18 �
 **Q. 세로(쇼츠)와 가로(유튜브) 둘 다 필요해요.**
 A. 첫 질문에서 두 비율을 모두 선택하면 같은 에셋으로 두 버전을 렌더링합니다
 (힉스필드 생성은 주 비율 기준이므로 보조 비율은 구도가 잘릴 수 있습니다).
+
+**Q. BGM이나 목소리(내레이션)는 어떻게 만들어지나요?**
+A. 힉스필드 `generate_audio` 로 BGM·내레이션·효과음을 생성합니다. 내레이션은 타깃 언어에
+맞는 보이스를 자동 선택하고, BGM은 벤치마킹에서 선택한 톤앤매너에 맞춰 작곡됩니다.
+직접 준비한 음원(BGM·성우 녹음)이 있으면 `uploads/` 에 넣거나 첫 질문 때 경로를 알려주세요 —
+생성 대신 그 파일을 사용합니다 (저작권 확인은 유저 책임).
 
 **Q. 완성 후 화질을 더 올리고 싶어요.**
 A. 완성 보고 후 "업스케일해줘"라고 요청하면 힉스필드 `upscale_video`(2K/4K)를 실행합니다.

@@ -20,11 +20,21 @@ export type Scene = {
   color?: string;
   durationInSeconds: number;
   subtitle?: string;
+  sfx?: string;
+  sfxVolume?: number;
 };
 
 export type AdData = {
   meta: { title?: string; fps?: number };
-  audio?: { bgm?: string; bgmVolume?: number; narration?: string };
+  audio?: {
+    bgm?: string;
+    bgmVolume?: number;
+    bgmFadeInSeconds?: number;
+    bgmFadeOutSeconds?: number;
+    narration?: string;
+    narrationVolume?: number;
+    narrationStartSeconds?: number;
+  };
   branding?: { logo?: string; brandColor?: string; accentColor?: string };
   scenes: Scene[];
   outro?: {
@@ -129,6 +139,9 @@ const SceneView: React.FC<{ scene: Scene; durationInFrames: number }> = ({
     <AbsoluteFill style={{ opacity }}>
       <SceneMedia scene={scene} durationInFrames={durationInFrames} />
       {scene.subtitle ? <Subtitle text={scene.subtitle} /> : null}
+      {scene.sfx ? (
+        <Audio src={staticFile(scene.sfx)} volume={scene.sfxVolume ?? 0.8} />
+      ) : null}
     </AbsoluteFill>
   );
 };
@@ -194,9 +207,40 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
   );
 };
 
+// ── BGM 트랙 (페이드인/아웃 — 컴포지션 프레임 기준이라 loop에도 안전) ──
+const BgmTrack: React.FC<{ audio: NonNullable<AdData["audio"]> }> = ({
+  audio,
+}) => {
+  const frame = useCurrentFrame();
+  const { fps, durationInFrames } = useVideoConfig();
+
+  const base = audio.bgmVolume ?? 0.5;
+  const fadeIn = Math.max(1, Math.round((audio.bgmFadeInSeconds ?? 0.5) * fps));
+  const fadeOut = Math.max(
+    0,
+    Math.round((audio.bgmFadeOutSeconds ?? 1.5) * fps)
+  );
+  const fadeOutStart = Math.max(fadeIn + 1, durationInFrames - fadeOut);
+  const fadeEnd = Math.max(fadeOutStart + 1, durationInFrames);
+
+  const volume = interpolate(
+    frame,
+    [0, fadeIn, fadeOutStart, fadeEnd],
+    [0, base, base, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+  );
+
+  return <Audio src={staticFile(audio.bgm!)} volume={volume} loop />;
+};
+
 // ── 메인 컴포지션 ────────────────────────────────────────────
 export const AdVideo: React.FC<{ data: AdData }> = ({ data }) => {
   const { fps } = useVideoConfig();
+
+  const narrationFrom = Math.max(
+    0,
+    Math.round((data.audio?.narrationStartSeconds ?? 0) * fps)
+  );
 
   let cursor = 0;
   const sceneSequences = data.scenes.map((scene) => {
@@ -222,15 +266,14 @@ export const AdVideo: React.FC<{ data: AdData }> = ({ data }) => {
           <Outro data={data} />
         </Sequence>
       ) : null}
-      {data.audio?.bgm ? (
-        <Audio
-          src={staticFile(data.audio.bgm)}
-          volume={data.audio.bgmVolume ?? 0.5}
-          loop
-        />
-      ) : null}
+      {data.audio?.bgm ? <BgmTrack audio={data.audio} /> : null}
       {data.audio?.narration ? (
-        <Audio src={staticFile(data.audio.narration)} />
+        <Sequence layout="none" from={narrationFrom}>
+          <Audio
+            src={staticFile(data.audio.narration)}
+            volume={data.audio.narrationVolume ?? 1}
+          />
+        </Sequence>
       ) : null}
     </AbsoluteFill>
   );

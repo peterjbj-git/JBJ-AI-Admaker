@@ -38,7 +38,11 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
   "audio": {
     "bgm": "assets/bgm.mp3",        // public/ 기준 상대경로. 없으면 생략
     "bgmVolume": 0.35,               // 내레이션 있으면 0.2~0.35, 없으면 0.5~0.7
-    "narration": "assets/narration.mp3"  // 없으면 생략
+    "bgmFadeInSeconds": 0.5,         // 생략 시 0.5
+    "bgmFadeOutSeconds": 1.5,        // 생략 시 1.5 — 끝이 뚝 끊기지 않게 항상 확보됨
+    "narration": "assets/narration.mp3",  // 없으면 생략
+    "narrationVolume": 1.0,          // 생략 시 1.0
+    "narrationStartSeconds": 0       // 비주얼 훅 먼저면 1~2초로. 생략 시 0
   },
   "branding": {
     "logo": "assets/logo.png",       // 아웃트로에 표시. 없으면 생략
@@ -52,7 +56,9 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
       "src": "assets/scene-1.mp4",   // video/image일 때. color면 생략
       "color": "#1E3A5F",            // type: "color"일 때 배경색
       "durationInSeconds": 5,
-      "subtitle": "화면 하단 자막 카피"   // 없으면 생략
+      "subtitle": "화면 하단 자막 카피",  // 없으면 생략
+      "sfx": "assets/sfx-1.mp3",       // 씬 시작에 맞춰 재생되는 효과음. 없으면 생략
+      "sfxVolume": 0.8                 // 생략 시 0.8
     }
   ],
   "outro": {
@@ -72,6 +78,8 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
 - `type: "image"` 씬은 자동으로 켄번즈(느린 확대) 효과가 적용된다 — 생성 실패 씬의 대체재.
 - `type: "color"` 씬은 단색 배경 + 자막 — 텍스트 강조 씬이나 최후의 대체재.
 - 자막 언어는 brief의 언어 항목을 따른다. 자막은 씬당 1~2문장, 12단어 이내로 짧게.
+- 오디오 볼륨·페이드·SFX 배치 기준값은 `references/audio-guide.md` 4절의 믹싱 표를 따른다.
+  렌더 후 내레이션이 BGM에 묻히면 bgmVolume을 0.1 내리고 재렌더한다.
 
 ## 트러블슈팅
 
