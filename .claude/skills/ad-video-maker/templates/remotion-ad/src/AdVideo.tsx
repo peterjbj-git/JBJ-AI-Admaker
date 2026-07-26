@@ -11,33 +11,15 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { loadFont as loadSansKR } from "@remotion/google-fonts/NotoSansKR";
-import { loadFont as loadSerifKR } from "@remotion/google-fonts/NotoSerifKR";
-import { loadFont as loadGowunBatang } from "@remotion/google-fonts/GowunBatang";
-import { loadFont as loadSongMyung } from "@remotion/google-fonts/SongMyung";
-import { loadFont as loadBlackHanSans } from "@remotion/google-fonts/BlackHanSans";
-
-// 시스템 폰트(맑은 고딕) 의존 금지 — PPT 느낌의 주범. 렌더 환경 무관하게 번들 폰트 사용.
-const { fontFamily: SANS_KR } = loadSansKR("normal", {
-  weights: ["400", "500", "700", "900"],
-  subsets: ["korean", "latin"],
-});
-const { fontFamily: SERIF_KR } = loadSerifKR("normal", {
-  weights: ["400", "500", "600"],
-  subsets: ["korean", "latin"],
-});
-const { fontFamily: GOWUN_BATANG } = loadGowunBatang("normal", {
-  weights: ["400", "700"],
-  subsets: ["korean", "latin"],
-});
-const { fontFamily: SONG_MYUNG } = loadSongMyung("normal", {
-  weights: ["400"],
-  subsets: ["korean"],
-});
-const { fontFamily: BLACK_HAN } = loadBlackHanSans("normal", {
-  weights: ["400"],
-  subsets: ["korean"],
-});
+import {
+  CAMERA_TEXT,
+  COLORS,
+  COPY_FONTS,
+  FONT,
+  MOTION,
+  type CameraMove,
+  type CopyFontKey,
+} from "./caption-theme";
 
 // ── scenes.json 스키마 타입 ──────────────────────────────────
 export type Scene = {
@@ -50,9 +32,10 @@ export type Scene = {
   subtitleStyle?: "copy" | "kinetic" | "bar";
   lead?: string;
   position?: "bottom" | "center" | "left" | "right" | "top";
-  font?: "sans" | "serif" | "batang" | "myung" | "impact";
+  font?: CopyFontKey;
   orientation?: "horizontal" | "vertical";
   reveal?: "fade" | "letters";
+  camera?: CameraMove;
   copyColor?: string;
   copyAccent?: string;
   scrim?: boolean;
@@ -95,36 +78,7 @@ export const calcTotalFrames = (data: AdData, fps: number): number => {
   return Math.max(1, Math.round((sceneSeconds + outroSeconds) * fps));
 };
 
-const FONT = `${SANS_KR}, Pretendard, "Malgun Gothic", "Segoe UI", Roboto, sans-serif`;
-const FONT_SERIF = `${SERIF_KR}, "Nanum Myeongjo", "Batang", serif`;
 const FADE_FRAMES = 12;
-
-// 카피용 서체 팔레트 — 컷 성격에 맞춰 선택 (전부 렌더 시 자동 다운로드되는 번들 폰트)
-const COPY_FONTS: Record<
-  NonNullable<Scene["font"]>,
-  { family: string; baseWeight: number; accentWeight: number; tracking: string }
-> = {
-  sans: { family: FONT, baseWeight: 500, accentWeight: 700, tracking: "0.03em" },
-  serif: { family: FONT_SERIF, baseWeight: 500, accentWeight: 600, tracking: "0.06em" },
-  batang: {
-    family: `${GOWUN_BATANG}, ${SERIF_KR}, serif`,
-    baseWeight: 400,
-    accentWeight: 700,
-    tracking: "0.1em",
-  },
-  myung: {
-    family: `${SONG_MYUNG}, ${SERIF_KR}, serif`,
-    baseWeight: 400,
-    accentWeight: 400,
-    tracking: "0.12em",
-  },
-  impact: {
-    family: `${BLACK_HAN}, ${SANS_KR}, sans-serif`,
-    baseWeight: 400,
-    accentWeight: 400,
-    tracking: "0.02em",
-  },
-};
 
 // *구간* 마크업 파싱 — 별표는 화면에 절대 렌더링하지 않는다 (여러 단어 강조 지원)
 type CopySegment = { text: string; accent: boolean };
@@ -173,32 +127,35 @@ const SceneMedia: React.FC<{ scene: Scene; durationInFrames: number }> = ({
 
 // ── 카피 자막 (기본) — 광고 카피 타이포그래피 ────────────────
 // 벤치마킹(라네즈형): 네거티브 스페이스 배치, 브랜드 컬러 솔리드 텍스트,
-// 리드+메인 계층, 마침표 액센트, 조용한 페이드+슬라이드 (바운스 금지)
+// 리드+메인 계층, 마침표 액센트. 진입은 감쇠 스프링 + 모션블러 + 카메라 정합 (R2·R5·L4).
 const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
   scene,
   accent,
 }) => {
   const frame = useCurrentFrame();
-  const { width, height } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
   const minDim = Math.min(width, height);
-  const opacity = interpolate(frame, [4, 16], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
+  const enter = spring({
+    frame: Math.max(0, frame - MOTION.enterDelayFrames),
+    fps,
+    config: MOTION.enterSpring,
   });
-  const rise = interpolate(frame, [4, 18], [minDim * 0.018, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const base = scene.copyColor ?? "#FFFFFF";
+  const opacity = enter;
+  const rise = (1 - enter) * minDim * 0.018;
+  const blur = (1 - enter) * MOTION.enterBlurPx;
+  const cam = CAMERA_TEXT[scene.camera ?? "static"];
+  const scale = cam.scaleFrom + (1 - cam.scaleFrom) * enter;
+  const xShift = (1 - enter) * cam.xFrom * minDim;
+  const base = scene.copyColor ?? COLORS.paper;
   const acc = scene.copyAccent ?? accent;
   const pos = scene.position ?? "bottom";
-  // 굵기 남발 금지 — 볼드 일변도가 PPT 느낌의 주범. 서체별 굵기·자간은 팔레트에서.
+  // 굵기 남발 금지 — 볼드 일변도가 PPT 느낌의 주범. 서체별 굵기·자간·크기는 caption-theme에서.
   const fontKey = scene.font ?? "sans";
-  const { family, baseWeight, accentWeight, tracking } = COPY_FONTS[fontKey];
-  const mainSize =
-    fontKey === "impact" ? 0.072 : fontKey === "sans" ? 0.052 : 0.06;
+  const { family, baseWeight, accentWeight, tracking, size: mainSize } =
+    COPY_FONTS[fontKey];
   const vertical = scene.orientation === "vertical";
-  const isLight = base.toUpperCase() === "#FFFFFF";
+  const isLight =
+    base.toUpperCase() === "#FFFFFF" || base === COLORS.paper;
   const shadow = isLight ? "0 2px 14px rgba(0, 0, 0, 0.22)" : "none";
 
   // 소프트 스크림 — 텍스트 존의 배경 명암을 정돈해 가독성 확보 (박스 아님, 광고식 그라데이션)
@@ -251,7 +208,8 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
           flexDirection: vertical ? "row-reverse" : undefined,
           alignItems: vertical ? "flex-start" : undefined,
           opacity,
-          transform: `translateY(${rise}px)`,
+          transform: `translateY(${rise}px) translateX(${xShift}px) scale(${scale})`,
+          filter: blur > 0.05 ? `blur(${blur}px)` : undefined,
           zIndex: 1,
         }}
       >
@@ -478,9 +436,9 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
   });
   const brandColor = data.branding?.brandColor ?? "#0F172A";
   const accentColor = data.branding?.accentColor ?? "#38BDF8";
-  // background 지정 시: 제품 히어로 이미지 풀블리드 + 타이포 오버레이 (카드 없음)
+  // background 지정 시: 제품 히어로 영상/이미지 풀블리드 + 타이포 오버레이 (카드 없음)
   const hasBg = Boolean(data.outro?.background);
-  const headlineColor = data.outro?.headlineColor ?? "#FFFFFF";
+  const headlineColor = data.outro?.headlineColor ?? COLORS.paper;
   const bgZoom = interpolate(frame, [0, fps * 4], [1.04, 1], {
     extrapolateRight: "clamp",
   });
@@ -502,6 +460,11 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
       extrapolateRight: "clamp",
     });
     const bgIsVideo = /\.(mp4|webm|mov)$/i.test(data.outro!.background!);
+    const enterO = spring({
+      frame: Math.max(0, frame - MOTION.enterDelayFrames),
+      fps,
+      config: MOTION.enterSpring,
+    });
     return (
       <AbsoluteFill style={{ opacity }}>
         <AbsoluteFill>
@@ -540,6 +503,11 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
             alignItems: "flex-start",
             paddingLeft: width * 0.08,
             paddingTop: height * 0.18,
+            transform: `translateY(${(1 - enterO) * minDim * 0.02}px)`,
+            filter:
+              (1 - enterO) * MOTION.enterBlurPx > 0.05
+                ? `blur(${(1 - enterO) * MOTION.enterBlurPx}px)`
+                : undefined,
           }}
         >
           <div
@@ -579,7 +547,7 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
           {data.outro?.sub ? (
             <div
               style={{
-                color: "#EAF6FF",
+                color: COLORS.outroSub,
                 fontSize: minDim * 0.023,
                 fontWeight: 500,
                 fontFamily: FONT,

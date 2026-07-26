@@ -63,6 +63,8 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
       "durationInSeconds": 5,
       "subtitle": "속부터 차오르는 *수분*.",  // 없으면 생략. *단어* 강조, 끝 마침표는 액센트 컬러
       "subtitleStyle": "copy",         // "copy"(기본, 광고 카피 타이포) | "kinetic"(단어별 팝인) | "bar"(하단 바)
+      "camera": "dolly_in",            // 이 컷의 카메라 무브 (생성 프롬프트와 동일하게) — 자막 진입
+                                       //   벡터가 카메라와 정합됨. static|dolly_in|dolly_out|pan_left|pan_right
       "lead": "리드 문구",              // copy 전용: 메인 위 작은 라인 (계층). 없으면 생략
       "position": "left",              // copy 전용: "bottom"(기본)|"center"|"left"|"right"|"top" — 네거티브 스페이스에 배치
       "font": "batang",                // copy 전용 서체 팔레트: "sans"(기본 고딕) | "serif"(노토 명조)
@@ -70,7 +72,9 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
                                        //   | "impact"(블랙한산스 — 강한 헤드라인·프로모션)
       "orientation": "vertical",       // copy 전용: "horizontal"(기본) | "vertical"(세로쓰기 — position left/right와 조합, 잡지 룩)
       "reveal": "letters",             // copy 전용: "fade"(기본) | "letters"(글자 단위 리빌 — 감성 훅 카피에)
-      "copyColor": "#0D4F79",          // copy 전용: 본문 컬러. 밝은 배경=브랜드 네이비, 어두운 배경=흰색(기본)
+      "copyColor": "#0D4F79",          // copy 전용: 본문 컬러. ★순백 #FFFFFF 금지 — 푸티지 팔레트에서
+                                       //   추출한 색을 지정 (밝은 배경=브랜드 네이비, 어두운 배경=쿨톤 페이퍼).
+                                       //   미지정 시 caption-theme의 페이퍼 화이트(#F2F9FF) 폴백
       "copyAccent": "#1F8FE5",         // copy 전용: 강조·마침표 컬러. 생략 시 branding.accentColor
       "scrim": true                    // copy 전용: 텍스트 존 소프트 그라데이션 명암 (기본 true — 가독성 확보)
       "sfx": "assets/sfx-1.mp3",       // 씬 시작에 맞춰 재생되는 효과음. 없으면 생략
@@ -136,7 +140,12 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
   단, 같은 서체 계열은 같은 메시지 층위에만 쓴다 (컷마다 무작위 교체 금지).
 - 프로젝트별 전용 폰트가 필요하면 `@remotion/google-fonts/<FontName>` import를 추가한다
   (한국어 지원 서체는 subsets: ["korean"] — 상세는 `.agents/skills/remotion-best-practices` 참조).
-- `type: "image"` 씬은 자동으로 켄번즈(느린 확대) 효과가 적용된다 — 생성 실패 씬의 대체재.
+- **스틸컷 금지**: 텍스트(자막·타이포)가 올라가는 화면은 **항상 영상**이어야 한다 —
+  정지 이미지 위 텍스트는 발표자료 느낌의 주범. 히어로 이미지를 만들었으면 반드시
+  image-to-video(start_image, 4초, generate_audio:false)로 라이브화해서 쓴다.
+- `type: "image"` 씬(켄번즈)은 **생성 실패 시 최후 폴백 전용**이며, 그 경우에도 자막을 얹지 않는다.
+- 텍스트 스타일·모션의 단일 소스는 `src/caption-theme.ts` 다 (kinetic-captions R6) —
+  서체·크기·자간·컬러·스프링·모션블러 토큰을 여기서만 수정하고, 컴포넌트에 하드코딩하지 않는다.
 - `type: "color"` 씬은 단색 배경 + 자막 — 텍스트 강조 씬이나 최후의 대체재.
 - 자막 언어는 brief의 언어 항목을 따른다. 자막은 씬당 1~2문장, 12단어 이내로 짧게.
 - 오디오 볼륨·페이드·SFX 배치 기준값은 `references/audio-guide.md` 5절의 믹싱 표를 따른다.
