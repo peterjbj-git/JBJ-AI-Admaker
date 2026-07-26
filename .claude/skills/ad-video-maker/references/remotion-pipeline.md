@@ -58,7 +58,9 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
       "durationInSeconds": 5,
       "subtitle": "화면 하단 자막 카피",  // 없으면 생략
       "sfx": "assets/sfx-1.mp3",       // 씬 시작에 맞춰 재생되는 효과음. 없으면 생략
-      "sfxVolume": 0.8                 // 생략 시 0.8
+      "sfxVolume": 0.8,                // 생략 시 0.8
+      "muted": false,                  // true면 클립 원음(대사·환경음) 제거. 생략 시 false
+      "videoVolume": 1.0               // 클립 원음 볼륨 (대사 씬은 1.0 유지). 생략 시 1.0
     }
   ],
   "outro": {
@@ -78,8 +80,10 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
 - `type: "image"` 씬은 자동으로 켄번즈(느린 확대) 효과가 적용된다 — 생성 실패 씬의 대체재.
 - `type: "color"` 씬은 단색 배경 + 자막 — 텍스트 강조 씬이나 최후의 대체재.
 - 자막 언어는 brief의 언어 항목을 따른다. 자막은 씬당 1~2문장, 12단어 이내로 짧게.
-- 오디오 볼륨·페이드·SFX 배치 기준값은 `references/audio-guide.md` 4절의 믹싱 표를 따른다.
-  렌더 후 내레이션이 BGM에 묻히면 bgmVolume을 0.1 내리고 재렌더한다.
+- 오디오 볼륨·페이드·SFX 배치 기준값은 `references/audio-guide.md` 5절의 믹싱 표를 따른다.
+  렌더 후 음성(내레이션·대사)이 BGM에 묻히면 bgmVolume을 0.1 내리고 재렌더한다.
+- 대사 씬은 클립 원음이 그대로 재생된다. 대사 없는 씬은 `muted: true` 로 환경음을 제거해
+  씬 간 오디오 단차를 줄인다.
 
 ## 트러블슈팅
 

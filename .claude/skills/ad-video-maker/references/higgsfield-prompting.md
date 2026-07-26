@@ -34,6 +34,10 @@ ToolSearch "select:mcp__claude_ai__balance,mcp__claude_ai__models_explore,mcp__c
      이유: 씬별 비디오를 전부 텍스트로 생성하면 씬마다 인물·제품 외형이 달라진다.
      키 비주얼을 image-to-video 입력으로 재사용해 일관성을 확보한다.
 5. **씬별 비디오 생성** (`generate_video`) — 스토리보드 순서대로. 비율은 brief의 비율과 일치시킨다.
+   brief의 음성 구성이 **등장인물 대사**를 포함하면 `references/audio-guide.md` 3절을 따른다:
+   음성 출력 지원 모델만 후보로 하고, 스토리보드에 확정된 씬별 대사문을 큰따옴표로
+   프롬프트에 정확히 지정한다(발화 언어·화자 명시). 대사 오디오는 클립에 포함되므로
+   별도 생성이 필요 없다. 대사 없는 컨셉이면 렌더링 시 씬 `muted: true` 로 환경음을 제거한다.
 6. **오디오 생성** — `references/audio-guide.md` 를 읽고 진행한다.
    BGM(프롬프트 공식·장르 매핑) → 내레이션(대본 규칙·`list_voices` 보이스 선택) → SFX(선택) 순.
    크레딧 부족 시 포기 순서는 SFX → BGM (내레이션 최우선).

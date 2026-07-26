@@ -22,6 +22,8 @@ export type Scene = {
   subtitle?: string;
   sfx?: string;
   sfxVolume?: number;
+  muted?: boolean;
+  videoVolume?: number;
 };
 
 export type AdData = {
@@ -73,6 +75,8 @@ const SceneMedia: React.FC<{ scene: Scene; durationInFrames: number }> = ({
     return (
       <OffthreadVideo
         src={staticFile(scene.src)}
+        muted={scene.muted ?? false}
+        volume={scene.videoVolume ?? 1}
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     );
