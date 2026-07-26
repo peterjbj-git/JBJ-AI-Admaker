@@ -1,5 +1,13 @@
 # 제작 보고서 — 애터미 아쿠아 크림 "리추얼" 20초 광고 (리부트)
-- 완료일: 2026-07-27 (v2 — CF 엔딩 개선)
+- 완료일: 2026-07-27 (**v3 — BGM 연속성 수정, 최종**)
+
+## v3 — BGM 끊김 수정 (유저 피드백 반영)
+- **최종본**: `final/atomy-aqua-ritual_16x9_v3.mp4` (20초, 17.2MB)
+- 원인: Seedance `generate_audio: true` 가 클립마다 서로 다른 내장 배경음악을 생성 →
+  클립 원음(0.3)이 살아 있어 컷마다 다른 음악이 재생되다 경계에서 끊김
+- 조치: 전 컷 `muted: true` — 전역 BGM(Meditation Impromptu 02) 단일 트랙만 연속 재생
+- 스킬 반영: audio-guide 4.5절 신설 (BGM 구성 시 클립 음소거 기본,
+  BGM-온리 확정 시 생성 단계에서 `generate_audio: false` 권장)
 
 ## v2 — 아웃트로 CF 엔딩 재설계 (유저 피드백 반영)
 - **최종본**: `final/atomy-aqua-ritual_16x9_v2.mp4` (20초, 17.2MB)

@@ -1,4 +1,4 @@
-{
+﻿{
   "meta": { "title": "Atomy Aqua Cream Ritual 20s", "fps": 30 },
   "audio": {
     "bgm": "assets/bgm.mp3",
@@ -16,35 +16,35 @@
       "type": "video",
       "src": "assets/cut-1.mp4",
       "durationInSeconds": 3,
-      "videoVolume": 0.3
+      "muted": true
     },
     {
       "id": "cut-2",
       "type": "video",
       "src": "assets/cut-2.mp4",
       "durationInSeconds": 2,
-      "videoVolume": 0.3
+      "muted": true
     },
     {
       "id": "cut-3",
       "type": "video",
       "src": "assets/cut-3.mp4",
       "durationInSeconds": 4,
-      "videoVolume": 0.3
+      "muted": true
     },
     {
       "id": "cut-4",
       "type": "video",
       "src": "assets/cut-4.mp4",
       "durationInSeconds": 3,
-      "videoVolume": 0.3
+      "muted": true
     },
     {
       "id": "cut-5",
       "type": "video",
       "src": "assets/cut-5.mp4",
       "durationInSeconds": 5,
-      "videoVolume": 0.3
+      "muted": true
     }
   ],
   "outro": {
