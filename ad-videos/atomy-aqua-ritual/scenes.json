@@ -50,8 +50,8 @@
   "outro": {
     "enabled": true,
     "durationInSeconds": 3,
-    "headline": "애터미 아쿠아 크림",
-    "sub": "하루 종일 가는 수분",
+    "headline": "수분이 머무는 시간",
+    "sub": "ATOMY AQUA CREAM",
     "background": "assets/outro-bg.png",
     "headlineColor": "#FFFFFF"
   }

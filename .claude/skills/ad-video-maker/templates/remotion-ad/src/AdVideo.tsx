@@ -485,49 +485,121 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
     extrapolateRight: "clamp",
   });
 
+  // ── background 모드: CF 엔딩 (에디토리얼 좌측 비대칭 + 시간차 노출) ──
+  // PPT식 중앙 제목+부제 금지. headline = 감성 카피(명조), sub = 작은 영문 브랜드 라인.
+  if (hasBg) {
+    const chars = Array.from(data.outro?.headline ?? "");
+    const ruleW = interpolate(frame, [20, 36], [0, minDim * 0.14], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
+    const subOp = interpolate(frame, [32, 46], [0, 1], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
+    const subTracking = interpolate(frame, [32, 56], [0.55, 0.35], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
+    return (
+      <AbsoluteFill style={{ opacity }}>
+        <AbsoluteFill>
+          <Img
+            src={staticFile(data.outro!.background!)}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transform: `scale(${bgZoom})`,
+            }}
+          />
+        </AbsoluteFill>
+        {/* 좌측 대각 스크림 — 타이포 존만 은은하게 정돈 */}
+        <AbsoluteFill
+          style={{
+            background:
+              "linear-gradient(105deg, rgba(7, 36, 58, 0.5) 0%, rgba(7, 36, 58, 0.18) 32%, transparent 54%)",
+          }}
+        />
+        <AbsoluteFill
+          style={{
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            paddingLeft: width * 0.08,
+            paddingTop: height * 0.18,
+          }}
+        >
+          <div
+            style={{
+              color: headlineColor,
+              fontSize: minDim * 0.052,
+              fontWeight: 400,
+              fontFamily: `${SONG_MYUNG}, ${SERIF_KR}, serif`,
+              letterSpacing: "0.1em",
+              lineHeight: 1.5,
+              textShadow: "0 2px 18px rgba(0, 0, 0, 0.3)",
+            }}
+          >
+            {chars.map((ch, i) => (
+              <span
+                key={i}
+                style={{
+                  opacity: interpolate(frame, [6 + i * 2, 14 + i * 2], [0, 1], {
+                    extrapolateLeft: "clamp",
+                    extrapolateRight: "clamp",
+                  }),
+                }}
+              >
+                {ch}
+              </span>
+            ))}
+          </div>
+          <div
+            style={{
+              height: Math.max(1, minDim * 0.0022),
+              width: ruleW,
+              backgroundColor: accentColor,
+              marginTop: minDim * 0.028,
+              marginBottom: minDim * 0.024,
+            }}
+          />
+          {data.outro?.sub ? (
+            <div
+              style={{
+                color: "#EAF6FF",
+                fontSize: minDim * 0.023,
+                fontWeight: 500,
+                fontFamily: FONT,
+                letterSpacing: `${subTracking}em`,
+                opacity: subOp,
+                textShadow: "0 1px 10px rgba(0, 0, 0, 0.25)",
+              }}
+            >
+              {data.outro.sub}
+            </div>
+          ) : null}
+        </AbsoluteFill>
+      </AbsoluteFill>
+    );
+  }
+
   return (
     <AbsoluteFill
       style={{
-        background: hasBg
-          ? "#000000"
-          : `linear-gradient(165deg, ${brandColor} 0%, #04121F 100%)`,
-        justifyContent: hasBg ? "flex-end" : "center",
+        background: `linear-gradient(165deg, ${brandColor} 0%, #04121F 100%)`,
+        justifyContent: "center",
         alignItems: "center",
         gap: minDim * 0.028,
-        paddingBottom: hasBg ? height * 0.1 : 0,
         opacity,
       }}
     >
-      {hasBg ? (
-        <>
-          <AbsoluteFill>
-            <Img
-              src={staticFile(data.outro!.background!)}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                transform: `scale(${bgZoom})`,
-              }}
-            />
-          </AbsoluteFill>
-          {/* 타이포 존 가독성 스크림 */}
-          <AbsoluteFill
-            style={{
-              background:
-                "linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, transparent 45%)",
-            }}
-          />
-        </>
-      ) : (
-        /* 중앙 라디얼 글로우 — 단색 배경의 밋밋함을 줄인다 */
-        <AbsoluteFill
-          style={{
-            background: `radial-gradient(circle at 50% 40%, ${accentColor}40 0%, transparent 55%)`,
-          }}
-        />
-      )}
-      {!hasBg && data.outro?.image ? (
+      {/* 중앙 라디얼 글로우 — 단색 배경의 밋밋함을 줄인다 */}
+      <AbsoluteFill
+        style={{
+          background: `radial-gradient(circle at 50% 40%, ${accentColor}40 0%, transparent 55%)`,
+        }}
+      />
+      {data.outro?.image ? (
         <div
           style={{
             backgroundColor: "#FFFFFF",
