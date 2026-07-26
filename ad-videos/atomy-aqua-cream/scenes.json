@@ -1,9 +1,10 @@
-{
-  "meta": { "title": "Atomy Aqua Cream 15s v3", "fps": 30 },
+﻿{
+  "meta": { "title": "Atomy Aqua Cream 15s v4", "fps": 30 },
   "audio": {
-    "narration": "assets/narration.wav",
-    "narrationVolume": 1.0,
-    "narrationStartSeconds": 1.0
+    "bgm": "assets/bgm.mp3",
+    "bgmVolume": 0.55,
+    "bgmFadeInSeconds": 0.6,
+    "bgmFadeOutSeconds": 2.0
   },
   "branding": {
     "brandColor": "#0B6FB4",
@@ -16,8 +17,9 @@
       "src": "assets/scene-1.mp4",
       "durationInSeconds": 2,
       "subtitle": "메마른 하루의 끝.",
-      "position": "bottom",
-      "videoVolume": 0.35
+      "font": "serif",
+      "position": "top",
+      "videoVolume": 0.65
     },
     {
       "id": "cut-2",
@@ -25,10 +27,11 @@
       "src": "assets/cut-2.mp4",
       "durationInSeconds": 2,
       "subtitle": "피부가 목마른 순간.",
+      "font": "serif",
       "position": "left",
       "copyColor": "#0D4F79",
       "copyAccent": "#1F8FE5",
-      "videoVolume": 0.35
+      "videoVolume": 0.65
     },
     {
       "id": "cut-3",
@@ -40,7 +43,7 @@
       "position": "bottom",
       "copyColor": "#0D4F79",
       "copyAccent": "#1F8FE5",
-      "videoVolume": 0.35
+      "videoVolume": 0.65
     },
     {
       "id": "cut-4",
@@ -51,7 +54,7 @@
       "position": "left",
       "copyColor": "#0D4F79",
       "copyAccent": "#1F8FE5",
-      "videoVolume": 0.35
+      "videoVolume": 0.65
     },
     {
       "id": "cut-5",
@@ -60,10 +63,10 @@
       "durationInSeconds": 2,
       "lead": "수분 가득",
       "subtitle": "*아쿠아* 부스팅.",
-      "position": "bottom",
+      "position": "top",
       "copyColor": "#0D4F79",
       "copyAccent": "#1F8FE5",
-      "videoVolume": 0.35
+      "videoVolume": 0.65
     },
     {
       "id": "cut-6",
@@ -72,8 +75,8 @@
       "durationInSeconds": 2,
       "lead": "ATOMY",
       "subtitle": "*아쿠아 크림*.",
-      "position": "bottom",
-      "videoVolume": 0.35
+      "position": "top",
+      "videoVolume": 0.65
     }
   ],
   "outro": {

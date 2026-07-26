@@ -60,8 +60,10 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
       "subtitleStyle": "copy",         // "copy"(기본, 광고 카피 타이포) | "kinetic"(단어별 팝인) | "bar"(하단 바)
       "lead": "리드 문구",              // copy 전용: 메인 위 작은 라인 (계층). 없으면 생략
       "position": "left",              // copy 전용: "bottom"(기본)|"center"|"left"|"right"|"top" — 네거티브 스페이스에 배치
+      "font": "serif",                 // copy 전용: "sans"(기본, 제품·기능 카피) | "serif"(명조 — 감성·훅 카피)
       "copyColor": "#0D4F79",          // copy 전용: 본문 컬러. 밝은 배경=브랜드 네이비, 어두운 배경=흰색(기본)
       "copyAccent": "#1F8FE5",         // copy 전용: 강조·마침표 컬러. 생략 시 branding.accentColor
+      "scrim": true                    // copy 전용: 텍스트 존 소프트 그라데이션 명암 (기본 true — 가독성 확보)
       "sfx": "assets/sfx-1.mp3",       // 씬 시작에 맞춰 재생되는 효과음. 없으면 생략
       "sfxVolume": 0.8,                // 생략 시 0.8
       "muted": false,                  // true면 클립 원음(대사·환경음) 제거. 생략 시 false

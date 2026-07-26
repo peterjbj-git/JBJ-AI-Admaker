@@ -11,6 +11,18 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { loadFont as loadSansKR } from "@remotion/google-fonts/NotoSansKR";
+import { loadFont as loadSerifKR } from "@remotion/google-fonts/NotoSerifKR";
+
+// 시스템 폰트(맑은 고딕) 의존 금지 — PPT 느낌의 주범. 렌더 환경 무관하게 번들 폰트 사용.
+const { fontFamily: SANS_KR } = loadSansKR("normal", {
+  weights: ["400", "500", "700", "900"],
+  subsets: ["korean", "latin"],
+});
+const { fontFamily: SERIF_KR } = loadSerifKR("normal", {
+  weights: ["400", "500", "600"],
+  subsets: ["korean", "latin"],
+});
 
 // ── scenes.json 스키마 타입 ──────────────────────────────────
 export type Scene = {
@@ -23,8 +35,10 @@ export type Scene = {
   subtitleStyle?: "copy" | "kinetic" | "bar";
   lead?: string;
   position?: "bottom" | "center" | "left" | "right" | "top";
+  font?: "sans" | "serif";
   copyColor?: string;
   copyAccent?: string;
+  scrim?: boolean;
   sfx?: string;
   sfxVolume?: number;
   muted?: boolean;
@@ -62,9 +76,17 @@ export const calcTotalFrames = (data: AdData, fps: number): number => {
   return Math.max(1, Math.round((sceneSeconds + outroSeconds) * fps));
 };
 
-const FONT =
-  'Pretendard, "Noto Sans KR", "Malgun Gothic", "Hiragino Sans", "Segoe UI", Roboto, sans-serif';
+const FONT = `${SANS_KR}, Pretendard, "Malgun Gothic", "Segoe UI", Roboto, sans-serif`;
+const FONT_SERIF = `${SERIF_KR}, "Nanum Myeongjo", "Batang", serif`;
 const FADE_FRAMES = 12;
+
+// *구간* 마크업 파싱 — 별표는 화면에 절대 렌더링하지 않는다 (여러 단어 강조 지원)
+type CopySegment = { text: string; accent: boolean };
+const parseAccents = (text: string): CopySegment[] =>
+  text
+    .split("*")
+    .map((seg, i) => ({ text: seg, accent: i % 2 === 1 }))
+    .filter((s) => s.text.length > 0);
 
 // ── 씬 미디어 (video / image+켄번즈 / color) ────────────────
 const SceneMedia: React.FC<{ scene: Scene; durationInFrames: number }> = ({
@@ -124,8 +146,31 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
   const base = scene.copyColor ?? "#FFFFFF";
   const acc = scene.copyAccent ?? accent;
   const pos = scene.position ?? "bottom";
+  const serif = scene.font === "serif";
+  const family = serif ? FONT_SERIF : FONT;
+  // 굵기 남발 금지 — 볼드 일변도가 PPT 느낌의 주범. 기본은 중간 굵기, 강조만 굵게.
+  const baseWeight = serif ? 500 : 500;
+  const accentWeight = serif ? 600 : 700;
   const isLight = base.toUpperCase() === "#FFFFFF";
   const shadow = isLight ? "0 2px 14px rgba(0, 0, 0, 0.22)" : "none";
+
+  // 소프트 스크림 — 텍스트 존의 배경 명암을 정돈해 가독성 확보 (박스 아님, 광고식 그라데이션)
+  const scrimOn = scene.scrim ?? true;
+  const scrimColor = isLight
+    ? "rgba(0, 0, 0, 0.30)"
+    : "rgba(255, 255, 255, 0.60)";
+  const scrimBg =
+    pos === "center"
+      ? `radial-gradient(ellipse 60% 45% at center, ${scrimColor} 0%, transparent 70%)`
+      : `linear-gradient(${
+          pos === "bottom"
+            ? "to top"
+            : pos === "top"
+            ? "to bottom"
+            : pos === "left"
+            ? "to right"
+            : "to left"
+        }, ${scrimColor} 0%, transparent 48%)`;
 
   const container: React.CSSProperties = {
     justifyContent:
@@ -140,20 +185,24 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
   const textAlign: React.CSSProperties["textAlign"] =
     pos === "left" ? "left" : pos === "right" ? "right" : "center";
 
-  // *단어* 강조 + 문장 끝 마침표 액센트
+  // *구간* 강조(별표는 렌더링 안 됨) + 문장 끝 마침표 액센트
   const text = scene.subtitle ?? "";
   const endsWithDot = text.endsWith(".");
   const bodyText = endsWithDot ? text.slice(0, -1) : text;
-  const words = bodyText.split(" ").filter(Boolean);
+  const segments = parseAccents(bodyText);
 
   return (
     <AbsoluteFill style={container}>
+      {scrimOn ? (
+        <AbsoluteFill style={{ background: scrimBg, opacity }} />
+      ) : null}
       <div
         style={{
           maxWidth: "80%",
           textAlign,
           opacity,
           transform: `translateY(${rise}px)`,
+          zIndex: 1,
         }}
       >
         {scene.lead ? (
@@ -161,11 +210,11 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
             style={{
               color: base,
               opacity: 0.85,
-              fontSize: minDim * 0.028,
-              fontWeight: 500,
-              fontFamily: FONT,
-              letterSpacing: "0.1em",
-              marginBottom: minDim * 0.012,
+              fontSize: minDim * 0.026,
+              fontWeight: 400,
+              fontFamily: family,
+              letterSpacing: "0.22em",
+              marginBottom: minDim * 0.014,
               textShadow: shadow,
             }}
           >
@@ -174,34 +223,28 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
         ) : null}
         <div
           style={{
-            fontSize: minDim * 0.055,
-            fontWeight: 700,
-            fontFamily: FONT,
-            letterSpacing: "0.01em",
-            lineHeight: 1.3,
+            fontSize: minDim * (serif ? 0.058 : 0.052),
+            fontWeight: baseWeight,
+            fontFamily: family,
+            letterSpacing: serif ? "0.06em" : "0.03em",
+            lineHeight: 1.45,
+            whiteSpace: "pre-wrap",
             textShadow: shadow,
           }}
         >
-          {words.map((w, i) => {
-            const isAccent =
-              w.length > 2 && w.startsWith("*") && w.endsWith("*");
-            const clean = isAccent ? w.slice(1, -1) : w;
-            const isLast = i === words.length - 1;
-            return (
-              <span
-                key={i}
-                style={{
-                  color: isAccent ? acc : base,
-                  fontWeight: isAccent ? 800 : 700,
-                  marginRight: isLast ? 0 : minDim * 0.013,
-                }}
-              >
-                {clean}
-              </span>
-            );
-          })}
+          {segments.map((seg, i) => (
+            <span
+              key={i}
+              style={{
+                color: seg.accent ? acc : base,
+                fontWeight: seg.accent ? accentWeight : baseWeight,
+              }}
+            >
+              {seg.text}
+            </span>
+          ))}
           {endsWithDot ? (
-            <span style={{ color: acc, fontWeight: 800 }}>.</span>
+            <span style={{ color: acc, fontWeight: accentWeight }}>.</span>
           ) : null}
         </div>
       </div>
@@ -217,7 +260,12 @@ const KineticSubtitle: React.FC<{ text: string; accent: string }> = ({
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const minDim = Math.min(width, height);
-  const words = text.split(" ").filter(Boolean);
+  const words = parseAccents(text).flatMap((seg) =>
+    seg.text
+      .split(" ")
+      .filter(Boolean)
+      .map((w) => ({ w, accent: seg.accent }))
+  );
 
   return (
     <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center" }}>
@@ -229,9 +277,7 @@ const KineticSubtitle: React.FC<{ text: string; accent: string }> = ({
           lineHeight: 1.25,
         }}
       >
-        {words.map((w, i) => {
-          const isAccent = w.length > 2 && w.startsWith("*") && w.endsWith("*");
-          const clean = isAccent ? w.slice(1, -1) : w;
+        {words.map(({ w: clean, accent: isAccent }, i) => {
           const local = Math.max(0, frame - (3 + i * 4));
           const pop = spring({
             frame: local,
