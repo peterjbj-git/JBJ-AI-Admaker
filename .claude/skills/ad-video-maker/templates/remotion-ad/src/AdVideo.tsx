@@ -20,7 +20,11 @@ export type Scene = {
   color?: string;
   durationInSeconds: number;
   subtitle?: string;
-  subtitleStyle?: "kinetic" | "bar";
+  subtitleStyle?: "copy" | "kinetic" | "bar";
+  lead?: string;
+  position?: "bottom" | "center" | "left" | "right" | "top";
+  copyColor?: string;
+  copyAccent?: string;
   sfx?: string;
   sfxVolume?: number;
   muted?: boolean;
@@ -99,7 +103,113 @@ const SceneMedia: React.FC<{ scene: Scene; durationInFrames: number }> = ({
   return <AbsoluteFill style={{ backgroundColor: scene.color ?? "#111827" }} />;
 };
 
-// ── 키네틱 자막 (기본) — 단어별 팝인, *단어* 는 강조 컬러 ────
+// ── 카피 자막 (기본) — 광고 카피 타이포그래피 ────────────────
+// 벤치마킹(라네즈형): 네거티브 스페이스 배치, 브랜드 컬러 솔리드 텍스트,
+// 리드+메인 계층, 마침표 액센트, 조용한 페이드+슬라이드 (바운스 금지)
+const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
+  scene,
+  accent,
+}) => {
+  const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+  const minDim = Math.min(width, height);
+  const opacity = interpolate(frame, [4, 16], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const rise = interpolate(frame, [4, 18], [minDim * 0.018, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const base = scene.copyColor ?? "#FFFFFF";
+  const acc = scene.copyAccent ?? accent;
+  const pos = scene.position ?? "bottom";
+  const isLight = base.toUpperCase() === "#FFFFFF";
+  const shadow = isLight ? "0 2px 14px rgba(0, 0, 0, 0.22)" : "none";
+
+  const container: React.CSSProperties = {
+    justifyContent:
+      pos === "top" ? "flex-start" : pos === "bottom" ? "flex-end" : "center",
+    alignItems:
+      pos === "left" ? "flex-start" : pos === "right" ? "flex-end" : "center",
+    paddingLeft: pos === "left" ? width * 0.08 : 0,
+    paddingRight: pos === "right" ? width * 0.08 : 0,
+    paddingTop: pos === "top" ? height * 0.1 : 0,
+    paddingBottom: pos === "bottom" ? height * 0.1 : 0,
+  };
+  const textAlign: React.CSSProperties["textAlign"] =
+    pos === "left" ? "left" : pos === "right" ? "right" : "center";
+
+  // *단어* 강조 + 문장 끝 마침표 액센트
+  const text = scene.subtitle ?? "";
+  const endsWithDot = text.endsWith(".");
+  const bodyText = endsWithDot ? text.slice(0, -1) : text;
+  const words = bodyText.split(" ").filter(Boolean);
+
+  return (
+    <AbsoluteFill style={container}>
+      <div
+        style={{
+          maxWidth: "80%",
+          textAlign,
+          opacity,
+          transform: `translateY(${rise}px)`,
+        }}
+      >
+        {scene.lead ? (
+          <div
+            style={{
+              color: base,
+              opacity: 0.85,
+              fontSize: minDim * 0.028,
+              fontWeight: 500,
+              fontFamily: FONT,
+              letterSpacing: "0.1em",
+              marginBottom: minDim * 0.012,
+              textShadow: shadow,
+            }}
+          >
+            {scene.lead}
+          </div>
+        ) : null}
+        <div
+          style={{
+            fontSize: minDim * 0.055,
+            fontWeight: 700,
+            fontFamily: FONT,
+            letterSpacing: "0.01em",
+            lineHeight: 1.3,
+            textShadow: shadow,
+          }}
+        >
+          {words.map((w, i) => {
+            const isAccent =
+              w.length > 2 && w.startsWith("*") && w.endsWith("*");
+            const clean = isAccent ? w.slice(1, -1) : w;
+            const isLast = i === words.length - 1;
+            return (
+              <span
+                key={i}
+                style={{
+                  color: isAccent ? acc : base,
+                  fontWeight: isAccent ? 800 : 700,
+                  marginRight: isLast ? 0 : minDim * 0.013,
+                }}
+              >
+                {clean}
+              </span>
+            );
+          })}
+          {endsWithDot ? (
+            <span style={{ color: acc, fontWeight: 800 }}>.</span>
+          ) : null}
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ── 키네틱 자막 (subtitleStyle: "kinetic") — 단어별 팝인 ─────
 const KineticSubtitle: React.FC<{ text: string; accent: string }> = ({
   text,
   accent,
@@ -206,8 +316,10 @@ const SceneView: React.FC<{
       {scene.subtitle ? (
         scene.subtitleStyle === "bar" ? (
           <Subtitle text={scene.subtitle} />
-        ) : (
+        ) : scene.subtitleStyle === "kinetic" ? (
           <KineticSubtitle text={scene.subtitle} accent={accent} />
+        ) : (
+          <CopySubtitle scene={scene} accent={accent} />
         )
       ) : null}
       {scene.sfx ? (

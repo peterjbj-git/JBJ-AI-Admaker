@@ -56,8 +56,12 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
       "src": "assets/scene-1.mp4",   // video/image일 때. color면 생략
       "color": "#1E3A5F",            // type: "color"일 때 배경색
       "durationInSeconds": 5,
-      "subtitle": "화면 하단 *자막* 카피",  // 없으면 생략. *단어* 는 강조 컬러(accentColor)로 표시
-      "subtitleStyle": "kinetic",      // "kinetic"(기본, 단어별 팝인 타이포) | "bar"(클래식 하단 바)
+      "subtitle": "속부터 차오르는 *수분*.",  // 없으면 생략. *단어* 강조, 끝 마침표는 액센트 컬러
+      "subtitleStyle": "copy",         // "copy"(기본, 광고 카피 타이포) | "kinetic"(단어별 팝인) | "bar"(하단 바)
+      "lead": "리드 문구",              // copy 전용: 메인 위 작은 라인 (계층). 없으면 생략
+      "position": "left",              // copy 전용: "bottom"(기본)|"center"|"left"|"right"|"top" — 네거티브 스페이스에 배치
+      "copyColor": "#0D4F79",          // copy 전용: 본문 컬러. 밝은 배경=브랜드 네이비, 어두운 배경=흰색(기본)
+      "copyAccent": "#1F8FE5",         // copy 전용: 강조·마침표 컬러. 생략 시 branding.accentColor
       "sfx": "assets/sfx-1.mp3",       // 씬 시작에 맞춰 재생되는 효과음. 없으면 생략
       "sfxVolume": 0.8,                // 생략 시 0.8
       "muted": false,                  // true면 클립 원음(대사·환경음) 제거. 생략 시 false
@@ -85,8 +89,12 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
 - 씬 `durationInSeconds` ≤ 실제 클립 길이여야 한다 (짧으면 앞부분만 사용되므로 안전,
   길면 마지막 프레임에서 멈춘 화면이 노출된다). **모델 최소 길이보다 짧은 컷은
   긴 클립을 생성해 앞부분만 쓰는 방식으로 만든다** (예: 4초 클립 → durationInSeconds 2).
-- 자막은 `subtitleStyle: "kinetic"`(기본)이 트렌디 표준 — 핵심 단어 1개에만 `*강조*` 마크업을
-  쓴다 (전부 강조하면 강조가 아니다). 차분·프리미엄 톤이면 "bar" 스타일을 고려한다.
+- **자막은 "copy"(광고 카피 타이포)가 기본**이다. 벤치마킹에서 확인된 광고 문법 5원칙:
+  ① 하단 고정이 아니라 컷의 네거티브 스페이스에 배치 (`position` — 컷마다 다르게),
+  ② 흰색+그림자 박스 대신 배경 밝기에 맞춘 솔리드 브랜드 컬러 (`copyColor`),
+  ③ 리드(작게)+메인(크게) 계층 (`lead`), ④ 카피 끝 마침표는 액센트 컬러 (문장에 "." 포함),
+  ⑤ 바운스 없는 조용한 페이드+슬라이드. 핵심 단어 1개에만 `*강조*` 마크업.
+  "kinetic"(단어별 팝인)은 쇼츠/릴스 캡션 무드에만, "bar"는 UGC·인터뷰 씬에만 쓴다.
 - `type: "image"` 씬은 자동으로 켄번즈(느린 확대) 효과가 적용된다 — 생성 실패 씬의 대체재.
 - `type: "color"` 씬은 단색 배경 + 자막 — 텍스트 강조 씬이나 최후의 대체재.
 - 자막 언어는 brief의 언어 항목을 따른다. 자막은 씬당 1~2문장, 12단어 이내로 짧게.

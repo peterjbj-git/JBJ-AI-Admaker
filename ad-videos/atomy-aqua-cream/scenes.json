@@ -1,5 +1,5 @@
 {
-  "meta": { "title": "Atomy Aqua Cream 15s v2", "fps": 30 },
+  "meta": { "title": "Atomy Aqua Cream 15s v3", "fps": 30 },
   "audio": {
     "narration": "assets/narration.wav",
     "narrationVolume": 1.0,
@@ -15,7 +15,8 @@
       "type": "video",
       "src": "assets/scene-1.mp4",
       "durationInSeconds": 2,
-      "subtitle": "메마른 하루의 *끝*",
+      "subtitle": "메마른 하루의 끝.",
+      "position": "bottom",
       "videoVolume": 0.35
     },
     {
@@ -23,7 +24,10 @@
       "type": "video",
       "src": "assets/cut-2.mp4",
       "durationInSeconds": 2,
-      "subtitle": "피부가 목마른 순간",
+      "subtitle": "피부가 목마른 순간.",
+      "position": "left",
+      "copyColor": "#0D4F79",
+      "copyAccent": "#1F8FE5",
       "videoVolume": 0.35
     },
     {
@@ -31,7 +35,11 @@
       "type": "video",
       "src": "assets/scene-2.mp4",
       "durationInSeconds": 2,
-      "subtitle": "속부터 차오르는 *수분*",
+      "lead": "속부터 차오르는",
+      "subtitle": "*깊은 수분*.",
+      "position": "bottom",
+      "copyColor": "#0D4F79",
+      "copyAccent": "#1F8FE5",
       "videoVolume": 0.35
     },
     {
@@ -39,7 +47,10 @@
       "type": "video",
       "src": "assets/cut-4.mp4",
       "durationInSeconds": 2,
-      "subtitle": "물기를 머금은 텍스처",
+      "subtitle": "물기를 머금은 텍스처.",
+      "position": "left",
+      "copyColor": "#0D4F79",
+      "copyAccent": "#1F8FE5",
       "videoVolume": 0.35
     },
     {
@@ -47,7 +58,11 @@
       "type": "video",
       "src": "assets/cut-5.mp4",
       "durationInSeconds": 2,
-      "subtitle": "*아쿠아* 부스팅",
+      "lead": "수분 가득",
+      "subtitle": "*아쿠아* 부스팅.",
+      "position": "bottom",
+      "copyColor": "#0D4F79",
+      "copyAccent": "#1F8FE5",
       "videoVolume": 0.35
     },
     {
@@ -55,7 +70,9 @@
       "type": "video",
       "src": "assets/scene-3.mp4",
       "durationInSeconds": 2,
-      "subtitle": "애터미 *아쿠아 크림*",
+      "lead": "ATOMY",
+      "subtitle": "*아쿠아 크림*.",
+      "position": "bottom",
       "videoVolume": 0.35
     }
   ],
