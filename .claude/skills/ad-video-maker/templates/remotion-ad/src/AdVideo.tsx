@@ -501,18 +501,31 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     });
+    const bgIsVideo = /\.(mp4|webm|mov)$/i.test(data.outro!.background!);
     return (
       <AbsoluteFill style={{ opacity }}>
         <AbsoluteFill>
-          <Img
-            src={staticFile(data.outro!.background!)}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              transform: `scale(${bgZoom})`,
-            }}
-          />
+          {bgIsVideo ? (
+            <OffthreadVideo
+              src={staticFile(data.outro!.background!)}
+              muted
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          ) : (
+            <Img
+              src={staticFile(data.outro!.background!)}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transform: `scale(${bgZoom})`,
+              }}
+            />
+          )}
         </AbsoluteFill>
         {/* 좌측 대각 스크림 — 타이포 존만 은은하게 정돈 */}
         <AbsoluteFill
@@ -532,10 +545,10 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
           <div
             style={{
               color: headlineColor,
-              fontSize: minDim * 0.052,
+              fontSize: minDim * 0.048,
               fontWeight: 400,
-              fontFamily: `${SONG_MYUNG}, ${SERIF_KR}, serif`,
-              letterSpacing: "0.1em",
+              fontFamily: FONT,
+              letterSpacing: "0.14em",
               lineHeight: 1.5,
               textShadow: "0 2px 18px rgba(0, 0, 0, 0.3)",
             }}

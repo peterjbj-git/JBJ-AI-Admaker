@@ -52,7 +52,7 @@
     "durationInSeconds": 3,
     "headline": "수분이 머무는 시간",
     "sub": "ATOMY AQUA CREAM",
-    "background": "assets/outro-bg.png",
+    "background": "assets/outro-bg.mp4",
     "headlineColor": "#FFFFFF"
   }
 }

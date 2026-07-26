@@ -79,13 +79,17 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
     "durationInSeconds": 3,
     "headline": "CTA 헤드라인",
     "sub": "부가 문구 (URL, 해시태그 등)",
-    "background": "assets/outro-bg.png",  // ★권장: 제품 중심 히어로 이미지 풀블리드 + 타이포 오버레이
+    "background": "assets/outro-bg.mp4",  // ★권장: 제품 히어로 '영상' 풀블리드 (.mp4/.webm/.mov 지원).
+                                          //   정지 이미지는 정적으로 보이므로, 히어로 이미지를 만들었으면
+                                          //   그 이미지를 start_image로 image-to-video 한 번 더 돌려
+                                          //   미세하게 움직이는 배경 클립(4초, generate_audio:false)을 쓴다
     "headlineColor": "#FFFFFF",           // background 위 헤드라인 컬러 (배경 밝기에 맞춰)
     "image": "assets/outro-product.jpg"   // background 미지정 시 폴백: 그라디언트 + 제품 카드
   }
   // 아웃트로 2가지 모드:
   // ① background 지정(권장) — **CF 엔딩**: 히어로 이미지 풀블리드 + 좌측 비대칭 에디토리얼 타이포.
-  //    headline = 감성 카피 한 줄(명조·Regular, 글자 시간차 리빌), sub = 작은 영문 브랜드 라인
+  //    headline = 감성 카피 한 줄(모던 고딕 Regular + 와이드 자간 — 궁서체류 캘리그래피 서체 금지,
+  //    글자 시간차 리빌), sub = 작은 영문 브랜드 라인
   //    (와이드 트래킹, 지연 등장 + 트래킹 조임 애니메이션), 사이에 가는 액센트 라인.
   //    좌측 대각 스크림 자동 적용. 슬로우 줌.
   //    ★ 카피 원칙: PPT식 "제품명 큰 제목 + 기능 부제" 금지. 제품이 화면에 있으면 한글 제품명을
