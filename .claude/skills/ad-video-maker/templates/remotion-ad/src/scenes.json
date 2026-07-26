@@ -1,0 +1,30 @@
+{
+  "meta": { "title": "Smoke Test", "fps": 30 },
+  "audio": {},
+  "branding": {
+    "brandColor": "#0F172A",
+    "accentColor": "#38BDF8"
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "type": "color",
+      "color": "#1E3A5F",
+      "durationInSeconds": 2,
+      "subtitle": "ad-video-maker 템플릿 정상 동작 확인"
+    },
+    {
+      "id": "scene-2",
+      "type": "color",
+      "color": "#3B0764",
+      "durationInSeconds": 2,
+      "subtitle": "Higgsfield × Remotion"
+    }
+  ],
+  "outro": {
+    "enabled": true,
+    "durationInSeconds": 2,
+    "headline": "AD VIDEO MAKER",
+    "sub": "smoke test build"
+  }
+}
