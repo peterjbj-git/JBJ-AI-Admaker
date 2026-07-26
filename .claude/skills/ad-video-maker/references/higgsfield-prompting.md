@@ -38,7 +38,7 @@ ToolSearch "select:mcp__claude_ai__balance,mcp__claude_ai__models_explore,mcp__c
    - **멀티컷 전략**: 모델이 멀티샷 파라미터(multi_shots / multi_prompt 등)를 지원하면
      한 클립에 연속 컷 2~3개를 담아 크레딧을 절약할 수 있다 (`models_explore(action:'get')` 로 확인).
      지원하지 않으면 컷별로 클립을 생성한다.
-   - **짧은 컷 처리**: 모델 최소 길이(예: Seedance 4초)보다 짧은 컷(1.5~2.5초)은
+   - **짧은 컷 처리**: 모델 최소 길이(예: Seedance 4초)보다 짧은 컷(1.5~3.5초)은
      최소 길이로 생성한 뒤 Remotion에서 앞부분만 사용한다 (scenes.json의
      durationInSeconds < 클립 길이). 한 클립의 앞/뒤 구간을 두 컷으로 나눠 쓰지는
      않는다 (Remotion 템플릿은 클립 시작점부터만 재생).
