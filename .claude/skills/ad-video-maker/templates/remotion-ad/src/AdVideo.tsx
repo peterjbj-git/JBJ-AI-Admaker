@@ -61,6 +61,7 @@ export type AdData = {
   outro?: {
     enabled: boolean;
     durationInSeconds: number;
+    style?: "editorial" | "logo";
     headline?: string;
     sub?: string;
     image?: string;
@@ -465,6 +466,100 @@ const Outro: React.FC<{ data: AdData }> = ({ data }) => {
       fps,
       config: MOTION.enterSpring,
     });
+
+    // ── "logo" 스타일: 배경 영상 위 중앙 대형 워드마크 록업 (브랜드 캠페인 엔딩) ──
+    if (data.outro?.style === "logo") {
+      const lines = (data.outro.headline ?? "").toUpperCase().split(" ");
+      return (
+        <AbsoluteFill style={{ opacity }}>
+          <AbsoluteFill>
+            {bgIsVideo ? (
+              <OffthreadVideo
+                src={staticFile(data.outro!.background!)}
+                muted
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              <Img
+                src={staticFile(data.outro!.background!)}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  transform: `scale(${bgZoom})`,
+                }}
+              />
+            )}
+          </AbsoluteFill>
+          <AbsoluteFill
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              transform: `translateY(${(1 - enterO) * minDim * 0.03}px) scale(${
+                0.96 + 0.04 * enterO
+              })`,
+              filter:
+                (1 - enterO) * MOTION.enterBlurPx > 0.05
+                  ? `blur(${(1 - enterO) * MOTION.enterBlurPx}px)`
+                  : undefined,
+            }}
+          >
+            <div
+              style={{
+                color: headlineColor,
+                fontSize: minDim * 0.15,
+                fontWeight: 900,
+                fontFamily: FONT,
+                letterSpacing: "0.05em",
+                lineHeight: 1.04,
+                textAlign: "left",
+                textShadow: "0 4px 30px rgba(0, 40, 90, 0.25)",
+              }}
+            >
+              {lines.map((ln, i) => (
+                <div key={i}>{ln}</div>
+              ))}
+            </div>
+            {/* 시그니처 웨이브 리본 */}
+            <svg
+              viewBox="0 0 400 60"
+              style={{
+                width: minDim * 0.62,
+                marginTop: minDim * 0.02,
+                opacity: interpolate(frame, [14, 28], [0, 1], {
+                  extrapolateLeft: "clamp",
+                  extrapolateRight: "clamp",
+                }),
+              }}
+            >
+              <path
+                d="M0 42 C 110 8, 250 58, 400 14 L 400 30 C 260 66, 120 30, 0 56 Z"
+                fill={headlineColor}
+              />
+            </svg>
+            {data.outro?.sub ? (
+              <div
+                style={{
+                  color: headlineColor,
+                  fontSize: minDim * 0.026,
+                  fontWeight: 500,
+                  fontFamily: FONT,
+                  letterSpacing: "0.4em",
+                  marginTop: minDim * 0.035,
+                  opacity: interpolate(frame, [24, 40], [0, 1], {
+                    extrapolateLeft: "clamp",
+                    extrapolateRight: "clamp",
+                  }),
+                }}
+              >
+                {data.outro.sub}
+              </div>
+            ) : null}
+          </AbsoluteFill>
+        </AbsoluteFill>
+      );
+    }
+
     return (
       <AbsoluteFill style={{ opacity }}>
         <AbsoluteFill>

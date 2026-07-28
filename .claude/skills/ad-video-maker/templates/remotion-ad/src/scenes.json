@@ -1,5 +1,5 @@
 {
-  "meta": { "title": "Pocari Sweat Summer 20s", "fps": 30 },
+  "meta": { "title": "Pocari Sweat Summer 20s v2 clean", "fps": 30 },
   "audio": {
     "bgm": "assets/bgm.mp3",
     "bgmVolume": 0.5,
@@ -24,10 +24,7 @@
       "type": "video",
       "src": "assets/cut-2.mp4",
       "durationInSeconds": 3,
-      "subtitle": "파랗게 달리는 *여름*.",
-      "position": "left",
       "camera": "pan_right",
-      "copyAccent": "#FFE9A8",
       "videoVolume": 0.5
     },
     {
@@ -35,11 +32,7 @@
       "type": "video",
       "src": "assets/cut-3.mp4",
       "durationInSeconds": 2.5,
-      "subtitle": "땀 흘린 *순간*.",
-      "position": "right",
       "camera": "static",
-      "copyColor": "#0B4F8F",
-      "copyAccent": "#1F8FE5",
       "videoVolume": 0.5
     },
     {
@@ -55,10 +48,7 @@
       "type": "video",
       "src": "assets/cut-5.mp4",
       "durationInSeconds": 3.5,
-      "subtitle": "몸이 원하는 *수분*.",
-      "position": "left",
       "camera": "dolly_in",
-      "copyAccent": "#FFE9A8",
       "videoVolume": 0.5
     },
     {
@@ -66,20 +56,17 @@
       "type": "video",
       "src": "assets/cut-6.mp4",
       "durationInSeconds": 5,
-      "subtitle": "온몸에 퍼지는 *파랑*.",
-      "font": "batang",
-      "reveal": "letters",
-      "position": "top",
       "camera": "dolly_out",
-      "copyAccent": "#FFE9A8",
       "videoVolume": 0.5
     }
   ],
   "outro": {
     "enabled": true,
     "durationInSeconds": 3,
-    "headline": "몸이 원하는 파랑.",
-    "sub": "POCARI SWEAT",
-    "background": "assets/outro-bg.mp4"
+    "style": "logo",
+    "headline": "POCARI SWEAT",
+    "sub": "ION SUPPLY DRINK",
+    "background": "assets/cut-1.mp4",
+    "headlineColor": "#FFFFFF"
   }
 }

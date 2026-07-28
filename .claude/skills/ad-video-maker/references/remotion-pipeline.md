@@ -86,6 +86,10 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
   "outro": {
     "enabled": true,
     "durationInSeconds": 3,
+    "style": "editorial",                 // "editorial"(기본: 좌측 카피+영문 라인) | "logo"(중앙 대형
+                                          //   워드마크 록업 + 웨이브 리본 — 브랜드 캠페인 엔딩.
+                                          //   headline이 대문자 워드마크로, 공백 기준 줄바꿈.
+                                          //   배경은 하늘·풍경 등 클린한 영상 컷 재사용 권장)
     "headline": "CTA 헤드라인",
     "sub": "부가 문구 (URL, 해시태그 등)",
     "background": "assets/outro-bg.mp4",  // ★권장: 제품 히어로 '영상' 풀블리드 (.mp4/.webm/.mov 지원).
