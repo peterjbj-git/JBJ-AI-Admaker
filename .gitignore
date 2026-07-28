@@ -4,6 +4,5 @@ node_modules/
 # 벤치마킹 다운로드 영상 — 저작권 자료, public 저장소에 올리지 않음
 ad-videos/*/benchmark/
 
-# 대용량 미디어 산출물 (문서·scenes.json만 버전 관리)
+# 대용량 미디어 중간 생성물 (문서·scenes.json·final 결과물만 버전 관리)
 ad-videos/*/assets/
-ad-videos/*/final/
