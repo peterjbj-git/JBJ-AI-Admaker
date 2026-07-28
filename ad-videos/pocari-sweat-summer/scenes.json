@@ -1,5 +1,5 @@
 {
-  "meta": { "title": "Pocari Sweat Summer 20s v2 clean", "fps": 30 },
+  "meta": { "title": "Pocari Sweat Summer 20s v3 hand", "fps": 30 },
   "audio": {
     "bgm": "assets/bgm.mp3",
     "bgmVolume": 0.5,
@@ -24,7 +24,11 @@
       "type": "video",
       "src": "assets/cut-2.mp4",
       "durationInSeconds": 3,
+      "subtitle": "파랗게 달리는 여름",
+      "font": "hand",
+      "position": "left",
       "camera": "pan_right",
+      "scrim": false,
       "videoVolume": 0.5
     },
     {
@@ -32,7 +36,11 @@
       "type": "video",
       "src": "assets/cut-3.mp4",
       "durationInSeconds": 2.5,
+      "subtitle": "땀 흘린 순간",
+      "font": "hand",
+      "position": "right",
       "camera": "static",
+      "scrim": false,
       "videoVolume": 0.5
     },
     {
@@ -48,7 +56,11 @@
       "type": "video",
       "src": "assets/cut-5.mp4",
       "durationInSeconds": 3.5,
+      "subtitle": "몸이 원하는 수분",
+      "font": "hand",
+      "position": "left",
       "camera": "dolly_in",
+      "scrim": false,
       "videoVolume": 0.5
     },
     {
@@ -56,7 +68,13 @@
       "type": "video",
       "src": "assets/cut-6.mp4",
       "durationInSeconds": 5,
+      "subtitle": "온몸에 퍼지는 파랑",
+      "font": "hand",
+      "reveal": "letters",
+      "position": "top",
       "camera": "dolly_out",
+      "doodle": "heart",
+      "scrim": false,
       "videoVolume": 0.5
     }
   ],

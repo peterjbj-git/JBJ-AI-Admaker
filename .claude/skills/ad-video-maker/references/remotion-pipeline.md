@@ -70,6 +70,9 @@ npx remotion render src/index.ts <CompositionID> "<저장소루트>/ad-videos/<s
       "font": "batang",                // copy 전용 서체 팔레트: "sans"(기본 고딕) | "serif"(노토 명조)
                                        //   | "batang"(고운바탕 — 부드러운 감성 훅) | "myung"(송명 — 클래식 디스플레이, K-뷰티 세로쓰기 단골)
                                        //   | "impact"(블랙한산스 — 강한 헤드라인·프로모션)
+                                       //   | "hand"(나눔펜 필기체 — 청춘·다이어리·스크랩북 무드, 자동 -2° 기울임.
+                                       //     scrim: false + doodle과 조합이 정석. 마침표 없이 캐주얼하게)
+      "doodle": "heart",               // copy 전용: 카피 끝 손그림 낙서 "heart" | "star" (지연 등장, 액센트 컬러)
       "orientation": "vertical",       // copy 전용: "horizontal"(기본) | "vertical"(세로쓰기 — position left/right와 조합, 잡지 룩)
       "reveal": "letters",             // copy 전용: "fade"(기본) | "letters"(글자 단위 리빌 — 감성 훅 카피에)
       "copyColor": "#0D4F79",          // copy 전용: 본문 컬러. ★순백 #FFFFFF 금지 — 푸티지 팔레트에서

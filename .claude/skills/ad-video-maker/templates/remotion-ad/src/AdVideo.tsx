@@ -36,6 +36,7 @@ export type Scene = {
   orientation?: "horizontal" | "vertical";
   reveal?: "fade" | "letters";
   camera?: CameraMove;
+  doodle?: "heart" | "star";
   copyColor?: string;
   copyAccent?: string;
   scrim?: boolean;
@@ -155,6 +156,8 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
   const { family, baseWeight, accentWeight, tracking, size: mainSize } =
     COPY_FONTS[fontKey];
   const vertical = scene.orientation === "vertical";
+  // 필기체는 손으로 쓴 듯 살짝 기울인다 (포카리 2026형 스크랩북 무드)
+  const tilt = fontKey === "hand" ? -2 : 0;
   const isLight =
     base.toUpperCase() === "#FFFFFF" || base === COLORS.paper;
   const shadow = isLight ? "0 2px 14px rgba(0, 0, 0, 0.22)" : "none";
@@ -209,7 +212,7 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
           flexDirection: vertical ? "row-reverse" : undefined,
           alignItems: vertical ? "flex-start" : undefined,
           opacity,
-          transform: `translateY(${rise}px) translateX(${xShift}px) scale(${scale})`,
+          transform: `translateY(${rise}px) translateX(${xShift}px) scale(${scale}) rotate(${tilt}deg)`,
           filter: blur > 0.05 ? `blur(${blur}px)` : undefined,
           zIndex: 1,
         }}
@@ -284,6 +287,40 @@ const CopySubtitle: React.FC<{ scene: Scene; accent: string }> = ({
               ))}
           {endsWithDot ? (
             <span style={{ color: acc, fontWeight: accentWeight }}>.</span>
+          ) : null}
+          {scene.doodle ? (
+            // 손그림 낙서 — 카피 끝에 하트/별 (지연 등장, 살짝 기울임)
+            <svg
+              viewBox="0 0 24 24"
+              style={{
+                width: minDim * 0.045,
+                marginLeft: minDim * 0.012,
+                verticalAlign: "baseline",
+                transform: "rotate(12deg)",
+                opacity: interpolate(frame, [18, 30], [0, 1], {
+                  extrapolateLeft: "clamp",
+                  extrapolateRight: "clamp",
+                }),
+              }}
+            >
+              {scene.doodle === "heart" ? (
+                <path
+                  d="M12 20.5s-6.8-4.3-9.2-8.2C.6 8.6 2.6 4.8 6 4.8c2 0 3.3 1 6 3.6 2.7-2.6 4-3.6 6-3.6 3.4 0 5.4 3.8 3.2 7.5-2.4 3.9-9.2 8.2-9.2 8.2z"
+                  fill="none"
+                  stroke={acc}
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+              ) : (
+                <path
+                  d="M12 2.5l2.6 6.2 6.7.5-5.1 4.4 1.6 6.6L12 16.6l-5.8 3.6 1.6-6.6-5.1-4.4 6.7-.5z"
+                  fill="none"
+                  stroke={acc}
+                  strokeWidth="1.8"
+                  strokeLinejoin="round"
+                />
+              )}
+            </svg>
           ) : null}
         </div>
       </div>

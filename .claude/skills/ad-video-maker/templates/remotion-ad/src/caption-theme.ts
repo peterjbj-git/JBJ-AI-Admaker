@@ -5,6 +5,7 @@ import { loadFont as loadSerifKR } from "@remotion/google-fonts/NotoSerifKR";
 import { loadFont as loadGowunBatang } from "@remotion/google-fonts/GowunBatang";
 import { loadFont as loadSongMyung } from "@remotion/google-fonts/SongMyung";
 import { loadFont as loadBlackHanSans } from "@remotion/google-fonts/BlackHanSans";
+import { loadFont as loadNanumPen } from "@remotion/google-fonts/NanumPenScript";
 
 // 시스템 폰트(맑은 고딕) 의존 금지 — PPT 느낌의 주범. 렌더 환경 무관하게 번들 폰트 사용.
 const { fontFamily: SANS_KR } = loadSansKR("normal", {
@@ -27,11 +28,21 @@ const { fontFamily: BLACK_HAN } = loadBlackHanSans("normal", {
   weights: ["400"],
   subsets: ["korean"],
 });
+const { fontFamily: NANUM_PEN } = loadNanumPen("normal", {
+  weights: ["400"],
+  subsets: ["korean"],
+});
 
 export const FONT = `${SANS_KR}, Pretendard, "Malgun Gothic", "Segoe UI", Roboto, sans-serif`;
 export const FONT_SERIF = `${SERIF_KR}, "Nanum Myeongjo", "Batang", serif`;
 
-export type CopyFontKey = "sans" | "serif" | "batang" | "myung" | "impact";
+export type CopyFontKey =
+  | "sans"
+  | "serif"
+  | "batang"
+  | "myung"
+  | "impact"
+  | "hand";
 
 // 카피용 서체 팔레트 — 컷 성격에 맞춰 선택. size는 minDim 배수.
 export const COPY_FONTS: Record<
@@ -66,6 +77,14 @@ export const COPY_FONTS: Record<
     accentWeight: 400,
     tracking: "0.02em",
     size: 0.072,
+  },
+  // 필기체 — 청춘·다이어리·스크랩북 무드 (포카리 2026 캠페인형). 살짝 기울여 렌더됨.
+  hand: {
+    family: `${NANUM_PEN}, ${SANS_KR}, cursive`,
+    baseWeight: 400,
+    accentWeight: 400,
+    tracking: "0.015em",
+    size: 0.075,
   },
 };
 
